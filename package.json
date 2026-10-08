@@ -1,0 +1,27 @@
+{
+  "name": "carlosestrchz.me",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Carlosestrchz/carlosestrchz.me.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Carlosestrchz/carlosestrchz.me/issues"
+  },
+  "homepage": "https://github.com/Carlosestrchz/carlosestrchz.me#readme",
+  "devDependencies": {
+    "vite": "^8.3.4"
+  }
+
+}
