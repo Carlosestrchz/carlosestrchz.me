@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog de Carlos Estrada | Developer</title>
+    <meta name="description" content="Página personal de Carlos Estrada, desarrollador Java Full Stack Jr. con enfoque en IoT, backend y nube.">
+
+    <link rel="stylesheet" href="css/tokens.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+
+    <script src="js/main.js" defer></script>
+</head>
+<body>
+
+    <!-- Hero -->
+    <header class="hero">
+        <div class="hero__glow" aria-hidden="true"></div>
+        <div class="hero__content">
+            <p class="hero__eyebrow">Hola, ¡Has llegado a mi página personal!</p>
+            <h1 class="hero__title">Carlos <span class="gradient-text">Estrada</span></h1>
+            <p class="hero__role">Desarrollador Java Full Stack Jr.</p>
+            <p class="hero__lead">
+                Especializado en soluciones IoT y desarrollo web, con experiencia práctica en backend e infraestructura en la nube. Aquí encontrarás mi formación, proyectos y habilidades.
+            </p>
+            <div class="hero__actions">
+                <a href="#proyectos" class="btn btn--primary">Ver proyectos</a>
+                <a href="#contacto" class="btn btn--outline">Contactar</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container page-main stack-xl">
+
+        <!-- Sobre mí -->
+        <section id="sobre-mi" class="about" data-reveal aria-labelledby="sobre-mi-titulo">
+            <div class="card card--lg">
+                <h2 id="sobre-mi-titulo" class="about__title">Sobre mí</h2>
+                <!-- TODO: borrador; reescríbelo con tu voz, sobre todo el párrafo de lo que te inspira -->
+                <p class="about__text">
+                    Estudiante de Ingeniería en Sistemas Computacionales a nada de titularse, y desarrollador Java full stack en formación. Estudié también Ingeniería en Electrónica, y por eso me atraen los proyectos donde el código se encuentra con el mundo físico: IoT y sistemas embebidos.
+                </p>
+                <p class="about__text about__text--spaced">
+                    Me inspira entender cómo funcionan las cosas, desde las bases, hasta ser capaz de construir proyectos que apliquen dichos principios: la electrónica y el prototipado, la privacidad digital, la infraestructura propia y el software abierto. Me motiva pensar que lo que construyo llegue a representar una solución para los problemas de mi entorno.
+            </div>
+            <div class="card card--md">
+                <h3 class="card__title">En breve</h3>
+                <p class="card__text">Monterrey, Nuevo León · Disponibilidad de reubicación</p>
+                <p class="card__text">Inglés (B2)</p>
+                <!-- TODO: deja solo tecnologías que puedas defender en una entrevista -->
+                <ul class="tag-list">
+                    <li class="tag">Java</li><li class="tag">Spring Boot</li><li class="tag">C/C++</li>
+                    <li class="tag">HTML</li><li class="tag">CSS</li><li class="tag">JavaScript</li>
+                    <li class="tag">Dart</li><li class="tag">Oracle Cloud</li>
+                </ul>
+                <div class="link-list">
+                    <!-- TODO: coloca tu PDF en assets/ con este nombre (o ajusta la ruta) -->
+                    <a href="https://www.linkedin.com/in/carlos-i-estrada/" download class="btn btn--primary btn--sm">Ver en LinkedIn</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Proyectos -->
+        <section id="proyectos" data-reveal aria-labelledby="proyectos-titulo">
+            <h2 id="proyectos-titulo" class="section-title">Proyectos académicos</h2>
+            <div class="grid-2">
+                <article class="card card--lg project-card">
+                    <div class="project-card__icon project-card__icon--1" aria-hidden="true">
+                        <img src="img/WattGuard.png" alt="Logo de WattGuard" class="project-card__logo">
+                    </div>
+                    <h3 class="project-card__title">WattGuard</h3>
+                    <p class="project-card__meta">Hackathon Talent Land 2026 · Qualcomm Sustainable Power Cities</p>
+                    <p class="project-card__text">Plataforma IoT con modelo de IA en el borde que monitorea el consumo eléctrico y lo ajusta de forma automática: apaga dispositivos en desuso o no prioritarios y puede desactivar nodos ante sobrecargas o exceso de temperatura. La app móvil está desarrollada con Dart y Flutter.</p>
+                    <ul class="tag-list">
+                        <li class="tag">IoT</li><li class="tag">Edge AI</li><li class="tag">Dart</li><li class="tag">Flutter</li><li class="tag">C</li><li class="tag">PlatformIO</li>
+                    </ul>
+                    <a href="https://github.com/Carlosestrchz/wattguard" target="_blank" rel="noopener noreferrer" class="link-accent">Más información →</a>
+                </article>
+                <article class="card card--lg project-card">
+                    <div class="project-card__icon project-card__icon--2" aria-hidden="true">
+                        <img src="img/signet-logo-white-trim.jpeg" alt="Logo de signet" class="project-card__logo">
+                    </div>
+                    <h3 class="project-card__title">Signet</h3>
+                    <p class="project-card__meta">Hackathon Solana Builder 2026</p>
+                    <p class="project-card__text">Protocolo distribuido que funciona sobre la blockchain de Solana para registrar y validar la propiedad de archivos digitales mediante su huella criptográfica SHA-256.</p>
+                    <ul class="tag-list">
+                        <li class="tag">blockchain</li><li class="tag">Criptografía</li><li class="tag">Rust</li><li class="tag">Solana</li>
+                    </ul>
+                    <a href="https://github.com/Carlosestrchz/signet" target="_blank" rel="noopener noreferrer" class="link-accent">Más información →</a>
+                </article>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Contacto -->
+    <footer id="contacto" class="site-footer">
+        <div class="site-footer__inner">
+            <div>
+                <h3 class="site-footer__title">Hablemos</h3>
+                <p class="site-footer__text">¿Tienes una vacante o un proyecto en mente? Escríbeme.</p>
+            </div>
+            <div class="site-footer__links">
+                <a href="https://github.com/Carlosestrchz" target="_blank" rel="noopener noreferrer" class="btn btn--outline btn--invert-hover btn--sm">GitHub</a>
+                <a href="https://www.linkedin.com/in/carlos-i-estrada/" target="_blank" rel="noopener noreferrer" class="btn btn--outline btn--invert-hover btn--sm">LinkedIn</a>
+            </div>
+        </div>
+        <p class="site-footer__email">
+            <a href="mailto:carlosestrchz@gmail.com">carlosestrchz@gmail.com</a>
+        </p>
+    </footer>
+
+</body>
+</html>
