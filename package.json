@@ -22,6 +22,8 @@
   "homepage": "https://github.com/Carlosestrchz/carlosestrchz.me#readme",
   "devDependencies": {
     "vite": "^8.3.4"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.8"
   }
-
 }
