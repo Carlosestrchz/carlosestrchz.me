@@ -38,6 +38,22 @@
     --aurora-delay-3: -43s;
     --aurora-delay-4: -61s;
 
+    /* estrellas tenues de fondo */
+    --star-opacity-min: 0.06;
+    --star-opacity-max-1: 0.55;
+    --star-opacity-max-2: 0.45;
+    --star-opacity-max-3: 0.65;
+    --star-opacity-max-4: 0.38;
+    --star-opacity-static: 0.32;
+    --star-duration-1: 5.3s;
+    --star-duration-2: 7.1s;
+    --star-duration-3: 9.7s;
+    --star-duration-4: 13.1s;
+    --star-delay-1: -1.7s;
+    --star-delay-2: -3.9s;
+    --star-delay-3: -6.1s;
+    --star-delay-4: -8.3s;
+
     /* efectos y capas (navegacion flotante) */
     --shadow-floating: 0 8px 32px rgba(0, 0, 0, 0.45);
     --blur-floating: 16px;
