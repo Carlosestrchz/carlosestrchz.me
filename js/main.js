@@ -25,10 +25,12 @@
     if (projectsCarousel && !reducedMotionQuery.matches) {
         const track = projectsCarousel.querySelector('.projects-carousel__track');
         const firstGroup = projectsCarousel.querySelector('.projects-carousel__group');
+        const mobileCarouselQuery = window.matchMedia('(max-width: 767.98px)');
 
         if (track && firstGroup) {
             projectsCarousel.classList.add('has-js-carousel');
 
+            const cardCount = firstGroup.children.length;
             let loopWidth = firstGroup.offsetWidth;
             let offset = 0;
             let isInView = !supportsObserver;
@@ -38,12 +40,24 @@
             let activePointerId = null;
             let pointerStartX = 0;
             let dragStartOffset = 0;
+            let dragStartCardIndex = 0;
             let isDragging = false;
             let suppressNextClick = false;
             let lastPointerX = 0;
             let lastPointerTime = 0;
             // velocidad de desplazamiento en px/ms
             let velocity = 0;
+
+            // estado de ajuste por tarjeta completa en vista movil
+            let snapStartOffset = 0;
+            let snapDelta = 0;
+            let snapStartTime = 0;
+            let snapDuration = 0;
+            let isSnapping = false;
+            let mobileIdleMs = 0;
+            const mobileAutoDelayMs = 4500;
+
+            const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 
             const getDurationSeconds = () => {
                 const raw = window.getComputedStyle(projectsCarousel).getPropertyValue('--carousel-duration');
@@ -58,14 +72,78 @@
                 return wrapped;
             };
 
+            const getCardMetrics = () => {
+                const step = cardCount > 0 ? loopWidth / cardCount : 0;
+                const firstItem = firstGroup.children[0];
+                const cardWidth = firstItem ? firstItem.offsetWidth : step;
+                const gap = Math.max(0, step - cardWidth);
+                const centerBias = Math.max(0, (projectsCarousel.clientWidth - cardWidth) / 2 - gap);
+                return { step, centerBias };
+            };
+
+            const getCardSnapOffset = (index) => {
+                const { step, centerBias } = getCardMetrics();
+                if (step <= 0 || cardCount <= 0) return 0;
+                const normalized = ((index % cardCount) + cardCount) % cardCount;
+                return wrapOffset(centerBias - normalized * step);
+            };
+
+            const getShortestDelta = (from, to) => {
+                if (loopWidth <= 0) return 0;
+                let diff = wrapOffset(to) - wrapOffset(from);
+                if (diff > loopWidth / 2) diff -= loopWidth;
+                if (diff < -loopWidth / 2) diff += loopWidth;
+                return diff;
+            };
+
+            const getNearestCardIndex = (currentOffset) => {
+                if (cardCount <= 0) return 0;
+                let bestIndex = 0;
+                let bestDist = Infinity;
+                for (let i = 0; i < cardCount; i += 1) {
+                    const dist = Math.abs(getShortestDelta(currentOffset, getCardSnapOffset(i)));
+                    if (dist < bestDist) {
+                        bestDist = dist;
+                        bestIndex = i;
+                    }
+                }
+                return bestIndex;
+            };
+
             const renderTrack = () => {
                 track.style.setProperty('--carousel-x', `${offset}px`);
             };
 
+            const snapToCard = (targetIndex, animate) => {
+                const targetOffset = getCardSnapOffset(targetIndex);
+                if (!animate) {
+                    isSnapping = false;
+                    offset = targetOffset;
+                    renderTrack();
+                    return;
+                }
+                snapStartOffset = offset;
+                snapDelta = getShortestDelta(offset, targetOffset);
+                if (Math.abs(snapDelta) < 0.5) {
+                    isSnapping = false;
+                    offset = targetOffset;
+                    renderTrack();
+                    return;
+                }
+                snapStartTime = performance.now();
+                snapDuration = 360;
+                isSnapping = true;
+            };
+
             const updateLoopWidth = () => {
                 loopWidth = firstGroup.offsetWidth;
-                offset = wrapOffset(offset);
-                renderTrack();
+                if (mobileCarouselQuery.matches) {
+                    snapToCard(getNearestCardIndex(offset), false);
+                } else {
+                    isSnapping = false;
+                    offset = wrapOffset(offset);
+                    renderTrack();
+                }
             };
 
             if (supportsObserver) {
@@ -82,12 +160,14 @@
 
             // pausa mientras el cursor o foco esta sobre cualquier tarjeta
             track.addEventListener('pointerover', (event) => {
+                if (event.pointerType === 'touch') return;
                 if (event.target.closest('.project-card')) {
                     isCardHovered = true;
                 }
             });
 
             track.addEventListener('pointerout', (event) => {
+                if (event.pointerType === 'touch') return;
                 const related = event.relatedTarget;
                 if (!related || !track.contains(related) || !related.closest('.project-card')) {
                     isCardHovered = false;
@@ -120,9 +200,12 @@
                 activePointerId = event.pointerId;
                 pointerStartX = event.clientX;
                 dragStartOffset = offset;
+                dragStartCardIndex = getNearestCardIndex(offset);
                 lastPointerX = event.clientX;
                 lastPointerTime = performance.now();
                 velocity = 0;
+                isSnapping = false;
+                mobileIdleMs = 0;
                 isDragging = false;
                 suppressNextClick = false;
             });
@@ -159,6 +242,7 @@
                 activePointerId = null;
 
                 if (isDragging) {
+                    const dx = event.clientX - pointerStartX;
                     isDragging = false;
                     projectsCarousel.classList.remove('is-dragging');
                     if (
@@ -171,6 +255,29 @@
                     if (performance.now() - lastPointerTime > 80) {
                         velocity = 0;
                     }
+
+                    // en vista movil encajar siempre a una tarjeta completa en la direccion del gesto
+                    if (mobileCarouselQuery.matches && cardCount > 0) {
+                        const { step } = getCardMetrics();
+                        const swipeThreshold = Math.max(36, step * 0.14);
+                        const flickVelocity = 0.25;
+                        let stepDelta = 0;
+
+                        if (Math.abs(dx) >= swipeThreshold || Math.abs(velocity) >= flickVelocity) {
+                            const rawSteps = step > 0 ? -dx / step : 0;
+                            if (Math.abs(rawSteps) >= 1) {
+                                stepDelta = Math.round(rawSteps);
+                            } else {
+                                const moveNext = dx !== 0 ? dx < 0 : velocity < 0;
+                                stepDelta = moveNext ? 1 : -1;
+                            }
+                        }
+
+                        velocity = 0;
+                        mobileIdleMs = 0;
+                        snapToCard(dragStartCardIndex + stepDelta, true);
+                    }
+
                     window.setTimeout(() => {
                         suppressNextClick = false;
                     }, 0);
@@ -193,7 +300,11 @@
             );
 
             window.addEventListener('resize', updateLoopWidth, { passive: true });
-            renderTrack();
+            if (mobileCarouselQuery.matches) {
+                snapToCard(0, false);
+            } else {
+                renderTrack();
+            }
 
             let lastFrameTime = performance.now();
             const tickCarousel = (now) => {
@@ -205,7 +316,22 @@
                 }
 
                 if (!isDragging && loopWidth > 0) {
-                    if (Math.abs(velocity) > 0.02) {
+                    if (mobileCarouselQuery.matches) {
+                        if (isSnapping) {
+                            const progress = Math.min(1, (now - snapStartTime) / snapDuration);
+                            offset = wrapOffset(snapStartOffset + snapDelta * easeOutCubic(progress));
+                            renderTrack();
+                            if (progress >= 1) {
+                                isSnapping = false;
+                            }
+                        } else if (isInView && !isCardHovered && !isCardFocused) {
+                            mobileIdleMs += dt * 1000;
+                            if (mobileIdleMs >= mobileAutoDelayMs) {
+                                mobileIdleMs = 0;
+                                snapToCard(getNearestCardIndex(offset) + 1, true);
+                            }
+                        }
+                    } else if (Math.abs(velocity) > 0.02) {
                         offset = wrapOffset(offset + velocity * (dt * 1000));
                         velocity *= Math.pow(0.92, dt * 60);
                         if (Math.abs(velocity) <= 0.02) velocity = 0;
