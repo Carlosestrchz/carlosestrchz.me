@@ -316,7 +316,7 @@
 
 /* ---------- Proyectos y tarjetas de showcase ---------- */
 .section-title {
-    margin-bottom: var(--space-12);
+    margin-bottom: var(--space-8);
     font-size: 2.25rem;
     line-height: 2.5rem;
     font-weight: 700;
@@ -368,9 +368,6 @@
 
 /* ---------- Footer ---------- */
 .site-footer {
-    margin-top: var(--space-32);
-    padding-top: var(--space-12);
-    padding-bottom: calc(var(--floating-nav-clearance) + env(safe-area-inset-bottom, 0px));
     border-top: 1px solid var(--color-border);
 }
 
@@ -513,6 +510,54 @@
     }
 }
 
+/* ---------- Efecto de difuminado ligado al scroll (CSS Scroll-Driven) ---------- */
+@keyframes section-enter {
+    from {
+        opacity: var(--scroll-fade-opacity);
+        filter: blur(var(--scroll-fade-blur));
+        transform: translateY(var(--scroll-fade-shift)) scale(var(--scroll-fade-scale));
+    }
+    to {
+        opacity: 1;
+        filter: blur(0px);
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes section-exit {
+    from {
+        opacity: 1;
+        filter: blur(0px);
+        transform: translateY(0) scale(1);
+    }
+    to {
+        opacity: var(--scroll-fade-opacity);
+        filter: blur(var(--scroll-fade-blur));
+        transform: translateY(calc(var(--scroll-fade-shift) * -1)) scale(var(--scroll-fade-scale));
+    }
+}
+
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .page-section {
+            animation-name: section-enter, section-exit;
+            animation-timing-function: linear, linear;
+            animation-fill-mode: backwards, forwards;
+            animation-timeline: view(), view();
+            animation-range: entry 0% entry 85%, exit 15% exit 100%;
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .page-section {
+        animation: none !important;
+        filter: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
+
 /* ---------- Animación de aparición (la activa js/main.js) ---------- */
 .reveal {
     opacity: 0;
@@ -527,6 +572,13 @@
 
 /* ---------- Impresión limpia (@media print) ---------- */
 @media print {
+    .page-section {
+        animation: none !important;
+        filter: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
     .hero {
         min-height: auto !important;
         padding-block: var(--space-6);

@@ -26,7 +26,7 @@
     </div>
 
     <!-- Hero -->
-    <header id="inicio" class="hero position-relative d-flex flex-column justify-content-center align-items-center min-vh-100 overflow-hidden">
+    <header id="inicio" class="hero page-section position-relative overflow-hidden">
         <div class="hero__content position-relative text-center">
             <p class="hero__eyebrow mb-0">Hola, ¡Has llegado a mi página personal!</p>
             <p class="hero__eyebrow mb-0">(en construcción)</p>
@@ -42,42 +42,44 @@
         </div>
     </header>
 
-    <main class="container page-container page-main stack-xl">
+    <main class="page-main">
 
         <!-- Sobre mí -->
-        <section id="sobre-mi" data-reveal aria-labelledby="sobre-mi-titulo">
-            <div class="row g-4 g-md-5 align-items-center">
-                <div class="col-12 col-md-6">
-                    <div class="card glass-card glass-card--lg">
-                        <div class="card-body">
-                            <h2 id="sobre-mi-titulo" class="about__title">Sobre mí</h2>
-                            <p class="about__text mb-0">
-                                Estudiante de Ingeniería en Sistemas Computacionales a nada de titularse, y desarrollador Java full stack en formación. Estudié también Ingeniería en Electrónica, y por eso me atraen los proyectos donde el código se encuentra con el mundo físico: IoT y sistemas embebidos.
-                            </p>
-                            <p class="about__text mt-3 mb-0">
-                                Me inspira entender cómo funcionan las cosas, desde las bases, hasta ser capaz de construir proyectos que apliquen dichos principios: la electrónica y el prototipado, la privacidad digital, la infraestructura propia y el software abierto. Me motiva pensar que lo que construyo llegue a representar una solución para los problemas de mi entorno.
-                            </p>
+        <section id="sobre-mi" class="page-section" aria-labelledby="sobre-mi-titulo">
+            <div class="container page-container page-section__inner" data-reveal>
+                <div class="row g-4 g-md-5 align-items-center">
+                    <div class="col-12 col-md-6">
+                        <div class="card glass-card glass-card--lg">
+                            <div class="card-body">
+                                <h2 id="sobre-mi-titulo" class="about__title">Sobre mí</h2>
+                                <p class="about__text mb-0">
+                                    Estudiante de Ingeniería en Sistemas Computacionales a nada de titularse, y desarrollador Java full stack en formación. Estudié también Ingeniería en Electrónica, y por eso me atraen los proyectos donde el código se encuentra con el mundo físico: IoT y sistemas embebidos.
+                                </p>
+                                <p class="about__text mt-3 mb-0">
+                                    Me inspira entender cómo funcionan las cosas, desde las bases, hasta ser capaz de construir proyectos que apliquen dichos principios: la electrónica y el prototipado, la privacidad digital, la infraestructura propia y el software abierto. Me motiva pensar que lo que construyo llegue a representar una solución para los problemas de mi entorno.
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-12 col-md-6">
-                    <div class="card glass-card glass-card--md">
-                        <div class="card-body">
-                            <h3 class="card-title glass-card__title">En resumen:</h3>
-                            <p class="card-text glass-card__text">Monterrey, Nuevo León · Disponibilidad de reubicación</p>
-                            <p class="card-text glass-card__text">Inglés (B2)</p>
-                            <ul class="list-unstyled d-flex flex-wrap gap-2 mb-0">
-                                <li class="badge tech-badge">Java</li>
-                                <li class="badge tech-badge">Spring Boot</li>
-                                <li class="badge tech-badge">C/C++</li>
-                                <li class="badge tech-badge">HTML</li>
-                                <li class="badge tech-badge">CSS</li>
-                                <li class="badge tech-badge">JavaScript</li>
-                                <li class="badge tech-badge">Dart</li>
-                                <li class="badge tech-badge">Oracle Cloud</li>
-                            </ul>
-                            <div class="d-flex flex-wrap gap-3 mt-4">
-                                <a href="https://www.linkedin.com/in/carlos-i-estrada/" target="_blank" rel="noopener noreferrer" class="btn rounded-pill btn-cta btn-cta--primary btn-cta--sm">Ver en LinkedIn</a>
+                    <div class="col-12 col-md-6">
+                        <div class="card glass-card glass-card--md">
+                            <div class="card-body">
+                                <h3 class="card-title glass-card__title">En resumen:</h3>
+                                <p class="card-text glass-card__text">Monterrey, Nuevo León · Disponibilidad de reubicación</p>
+                                <p class="card-text glass-card__text">Inglés (B2)</p>
+                                <ul class="list-unstyled d-flex flex-wrap gap-2 mb-0">
+                                    <li class="badge tech-badge">Java</li>
+                                    <li class="badge tech-badge">Spring Boot</li>
+                                    <li class="badge tech-badge">C/C++</li>
+                                    <li class="badge tech-badge">HTML</li>
+                                    <li class="badge tech-badge">CSS</li>
+                                    <li class="badge tech-badge">JavaScript</li>
+                                    <li class="badge tech-badge">Dart</li>
+                                    <li class="badge tech-badge">Oracle Cloud</li>
+                                </ul>
+                                <div class="d-flex flex-wrap gap-3 mt-4">
+                                    <a href="https://www.linkedin.com/in/carlos-i-estrada/" target="_blank" rel="noopener noreferrer" class="btn rounded-pill btn-cta btn-cta--primary btn-cta--sm">Ver en LinkedIn</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -86,48 +88,50 @@
         </section>
 
         <!-- Proyectos -->
-        <section id="proyectos" data-reveal aria-labelledby="proyectos-titulo">
-            <h2 id="proyectos-titulo" class="section-title">Proyectos académicos</h2>
-            <div class="row row-cols-1 row-cols-md-2 g-4">
-                <div class="col">
-                    <article class="card glass-card glass-card--lg project-card h-100">
-                        <div class="card-body d-flex flex-column">
-                            <div class="project-card__icon project-card__icon--1 d-flex align-items-center justify-content-center" aria-hidden="true">
-                                <img src="img/WattGuard.png" alt="Logo de WattGuard" class="project-card__logo">
+        <section id="proyectos" class="page-section" aria-labelledby="proyectos-titulo">
+            <div class="container page-container page-section__inner" data-reveal>
+                <h2 id="proyectos-titulo" class="section-title">Proyectos académicos</h2>
+                <div class="row row-cols-1 row-cols-md-2 g-4">
+                    <div class="col">
+                        <article class="card glass-card glass-card--lg project-card h-100">
+                            <div class="card-body d-flex flex-column">
+                                <div class="project-card__icon project-card__icon--1 d-flex align-items-center justify-content-center" aria-hidden="true">
+                                    <img src="img/WattGuard.png" alt="Logo de WattGuard" class="project-card__logo">
+                                </div>
+                                <h3 class="card-title project-card__title">WattGuard</h3>
+                                <p class="project-card__meta">Hackathon Talent Land 2026 · Qualcomm Sustainable Power Cities</p>
+                                <p class="card-text project-card__text flex-grow-1">Plataforma IoT con modelo de IA en el borde que monitorea el consumo eléctrico y lo ajusta de forma automática: apaga dispositivos en desuso o no prioritarios y puede desactivar nodos ante sobrecargas o exceso de temperatura. La app móvil está desarrollada con Dart y Flutter.</p>
+                                <ul class="list-unstyled d-flex flex-wrap gap-2 mb-3">
+                                    <li class="badge tech-badge">IoT</li>
+                                    <li class="badge tech-badge">Edge AI</li>
+                                    <li class="badge tech-badge">Dart</li>
+                                    <li class="badge tech-badge">Flutter</li>
+                                    <li class="badge tech-badge">C</li>
+                                    <li class="badge tech-badge">PlatformIO</li>
+                                </ul>
+                                <a href="https://github.com/Carlosestrchz/wattguard" target="_blank" rel="noopener noreferrer" class="link-accent align-self-start">Más información →</a>
                             </div>
-                            <h3 class="card-title project-card__title">WattGuard</h3>
-                            <p class="project-card__meta">Hackathon Talent Land 2026 · Qualcomm Sustainable Power Cities</p>
-                            <p class="card-text project-card__text flex-grow-1">Plataforma IoT con modelo de IA en el borde que monitorea el consumo eléctrico y lo ajusta de forma automática: apaga dispositivos en desuso o no prioritarios y puede desactivar nodos ante sobrecargas o exceso de temperatura. La app móvil está desarrollada con Dart y Flutter.</p>
-                            <ul class="list-unstyled d-flex flex-wrap gap-2 mb-3">
-                                <li class="badge tech-badge">IoT</li>
-                                <li class="badge tech-badge">Edge AI</li>
-                                <li class="badge tech-badge">Dart</li>
-                                <li class="badge tech-badge">Flutter</li>
-                                <li class="badge tech-badge">C</li>
-                                <li class="badge tech-badge">PlatformIO</li>
-                            </ul>
-                            <a href="https://github.com/Carlosestrchz/wattguard" target="_blank" rel="noopener noreferrer" class="link-accent align-self-start">Más información →</a>
-                        </div>
-                    </article>
-                </div>
-                <div class="col">
-                    <article class="card glass-card glass-card--lg project-card h-100">
-                        <div class="card-body d-flex flex-column">
-                            <div class="project-card__icon project-card__icon--2 d-flex align-items-center justify-content-center" aria-hidden="true">
-                                <img src="img/signet-logo-white-trim.jpeg" alt="Logo de signet" class="project-card__logo">
+                        </article>
+                    </div>
+                    <div class="col">
+                        <article class="card glass-card glass-card--lg project-card h-100">
+                            <div class="card-body d-flex flex-column">
+                                <div class="project-card__icon project-card__icon--2 d-flex align-items-center justify-content-center" aria-hidden="true">
+                                    <img src="img/signet-logo-white-trim.jpeg" alt="Logo de signet" class="project-card__logo">
+                                </div>
+                                <h3 class="card-title project-card__title">Signet</h3>
+                                <p class="project-card__meta">Hackathon Solana Builder 2026</p>
+                                <p class="card-text project-card__text flex-grow-1">Protocolo distribuido que funciona sobre la blockchain de Solana para registrar y validar la propiedad de archivos digitales mediante su huella criptográfica SHA-256.</p>
+                                <ul class="list-unstyled d-flex flex-wrap gap-2 mb-3">
+                                    <li class="badge tech-badge">blockchain</li>
+                                    <li class="badge tech-badge">Criptografía</li>
+                                    <li class="badge tech-badge">Rust</li>
+                                    <li class="badge tech-badge">Solana</li>
+                                </ul>
+                                <a href="https://github.com/Carlosestrchz/signet" target="_blank" rel="noopener noreferrer" class="link-accent align-self-start">Más información →</a>
                             </div>
-                            <h3 class="card-title project-card__title">Signet</h3>
-                            <p class="project-card__meta">Hackathon Solana Builder 2026</p>
-                            <p class="card-text project-card__text flex-grow-1">Protocolo distribuido que funciona sobre la blockchain de Solana para registrar y validar la propiedad de archivos digitales mediante su huella criptográfica SHA-256.</p>
-                            <ul class="list-unstyled d-flex flex-wrap gap-2 mb-3">
-                                <li class="badge tech-badge">blockchain</li>
-                                <li class="badge tech-badge">Criptografía</li>
-                                <li class="badge tech-badge">Rust</li>
-                                <li class="badge tech-badge">Solana</li>
-                            </ul>
-                            <a href="https://github.com/Carlosestrchz/signet" target="_blank" rel="noopener noreferrer" class="link-accent align-self-start">Más información →</a>
-                        </div>
-                    </article>
+                        </article>
+                    </div>
                 </div>
             </div>
         </section>
@@ -135,8 +139,8 @@
     </main>
 
     <!-- Contacto -->
-    <footer id="contacto" class="site-footer">
-        <div class="container page-container d-flex flex-column flex-md-row justify-content-md-between align-items-center gap-4 text-center text-md-start">
+    <footer id="contacto" class="site-footer page-section">
+        <div class="container page-container page-section__inner d-flex flex-column flex-md-row justify-content-md-between align-items-center gap-4 text-center text-md-start">
             <div>
                 <h3 class="site-footer__title">Hablemos</h3>
                 <p class="site-footer__text mb-0">¿Tienes una vacante o un proyecto en mente? Escríbeme.</p>

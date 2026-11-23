@@ -107,15 +107,36 @@
     const easeInOutCubic = (t) =>
         t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
+    const getLayoutTop = (el) => {
+        let top = 0;
+        let current = el;
+        while (current) {
+            top += current.offsetTop;
+            current = current.offsetParent;
+        }
+        return top;
+    };
+
     const getTargetScrollY = (target) => {
+        const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
         if (target === sections[0].target) return 0;
 
-        const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-        if (target === sections[sections.length - 1].target) return maxScroll;
+        // Usar métricas de layout sin transformar (evita desfase por translateY/scale del scroll-driven)
+        const sectionTop = getLayoutTop(target);
+        const sectionHeight = target.offsetHeight;
 
-        const scrollMarginTop = parseFloat(window.getComputedStyle(target).scrollMarginTop) || 0;
-        const rawY = target.getBoundingClientRect().top + window.scrollY - scrollMarginTop;
+        // Aterrizar centrado en la sección (o al inicio si la sección supera el alto del viewport)
+        const rawY = sectionHeight > window.innerHeight
+            ? sectionTop
+            : sectionTop - (window.innerHeight - sectionHeight) / 2;
+
         return Math.max(0, Math.min(maxScroll, rawY));
+    };
+
+    const finishProgrammaticScroll = () => {
+        isProgrammaticScroll = false;
+        document.documentElement.classList.remove('is-scrolling-to-section');
+        bottomActive = isAtPageBottom();
     };
 
     const cancelProgrammaticScroll = (syncAfterCancel) => {
@@ -124,8 +145,7 @@
             window.cancelAnimationFrame(scrollAnimationId);
             scrollAnimationId = null;
         }
-        isProgrammaticScroll = false;
-        bottomActive = isAtPageBottom();
+        finishProgrammaticScroll();
         if (syncAfterCancel) {
             setActiveSection(findCenterSectionId());
         }
@@ -143,17 +163,16 @@
 
         if (reducedMotionQuery.matches || Math.abs(delta) < 1) {
             isProgrammaticScroll = true;
+            document.documentElement.classList.add('is-scrolling-to-section');
             window.scrollTo({ top: targetY, left: 0, behavior: 'instant' });
-            window.requestAnimationFrame(() => {
-                isProgrammaticScroll = false;
-                bottomActive = isAtPageBottom();
-            });
+            window.requestAnimationFrame(finishProgrammaticScroll);
             return;
         }
 
         const duration = Math.min(750, Math.max(450, Math.abs(delta) * 0.45));
         const startTime = performance.now();
         isProgrammaticScroll = true;
+        document.documentElement.classList.add('is-scrolling-to-section');
 
         const step = (now) => {
             const elapsed = now - startTime;
@@ -166,10 +185,7 @@
                 scrollAnimationId = window.requestAnimationFrame(step);
             } else {
                 scrollAnimationId = null;
-                window.requestAnimationFrame(() => {
-                    isProgrammaticScroll = false;
-                    bottomActive = isAtPageBottom();
-                });
+                window.requestAnimationFrame(finishProgrammaticScroll);
             }
         };
 

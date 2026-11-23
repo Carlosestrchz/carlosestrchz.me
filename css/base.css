@@ -3,7 +3,7 @@
    ========================================================================== */
 
 html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
     -webkit-text-size-adjust: 100%;
 }
 
@@ -24,14 +24,12 @@ a {
     text-decoration: none;
 }
 
-@media (prefers-reduced-motion: reduce) {
-    html {
-        scroll-behavior: auto;
-    }
-}
-
 /* Impresión limpia (base) */
 @media print {
+    html {
+        scroll-snap-type: none !important;
+    }
+
     body {
         background-color: #ffffff !important;
         color: #111827 !important;

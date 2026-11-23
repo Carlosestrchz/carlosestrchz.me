@@ -1,5 +1,5 @@
 /* ==========================================================================
-   layout.css — Estructura de página y ritmo vertical sobre el grid de Bootstrap
+   layout.css — Estructura de página, secciones full-viewport y scroll-snap
    ========================================================================== */
 
 .page-container {
@@ -8,24 +8,79 @@
 }
 
 .page-main {
-    padding-block: var(--space-20);
+    padding-block: 0;
 }
 
-/* Separación vertical entre secciones directas (patrón "stack") */
-.stack-xl > * + * {
-    margin-top: var(--space-32);
+/* Secciones a pantalla completa centradas vertical y horizontalmente */
+.page-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: var(--section-min-height);
+    padding-top: var(--section-padding-top);
+    padding-bottom: var(--section-padding-bottom);
 }
 
-.page-main > section[id] {
-    scroll-margin-top: var(--space-12);
+.page-section__inner {
+    width: 100%;
 }
 
+/* Scroll-snap obligatorio solo en escritorios amplios con movimiento habilitado */
+@media (min-width: 992px) and (min-height: 700px) and (prefers-reduced-motion: no-preference) {
+    html {
+        scroll-snap-type: y mandatory;
+    }
+
+    /* Desactiva snap temporalmente durante el desplazamiento suave de la navbar */
+    html.is-scrolling-to-section {
+        scroll-snap-type: none;
+    }
+
+    .page-section {
+        scroll-snap-align: center;
+        scroll-snap-stop: always;
+    }
+
+    .page-section--tall {
+        scroll-snap-align: start;
+    }
+}
+
+/* Sin snap ni altura forzada de 100svh con reducción de movimiento */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-snap-type: none;
+    }
+
+    .page-section {
+        min-height: auto;
+        scroll-snap-align: none;
+        scroll-snap-stop: normal;
+        padding-block: var(--space-12);
+    }
+
+    .site-footer.page-section {
+        padding-bottom: var(--section-padding-bottom);
+    }
+}
+
+/* Impresión limpia */
 @media print {
+    html {
+        scroll-snap-type: none !important;
+    }
+
     .page-main {
         padding-block: var(--space-6);
     }
 
-    .stack-xl > * + * {
-        margin-top: var(--space-8);
+    .page-section {
+        display: block;
+        min-height: auto !important;
+        padding-block: var(--space-6);
+        scroll-snap-align: none;
+        scroll-snap-stop: normal;
     }
 }

@@ -45,7 +45,16 @@
     --opacity-nav-hover: 0.85;
     --z-floating-nav: 1030;
     --floating-nav-offset: var(--space-4);
-    --floating-nav-clearance: 6.5rem;
+    --floating-nav-clearance: 5.5rem;
+
+    /* Secciones de viewport completo y difuminado al scroll */
+    --section-min-height: 100svh;
+    --section-padding-top: var(--space-6);
+    --section-padding-bottom: calc(var(--floating-nav-clearance) + env(safe-area-inset-bottom, 0px));
+    --scroll-fade-opacity: 0.15;
+    --scroll-fade-blur: 6px;
+    --scroll-fade-shift: 1.5rem;
+    --scroll-fade-scale: 0.98;
 
     /* Acentos con transparencia */
     --color-accent-glow: rgba(99, 102, 241, 0.2);
