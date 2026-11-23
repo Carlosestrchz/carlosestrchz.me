@@ -258,6 +258,9 @@
     sections.forEach(({ id, link, target }) => {
         link.addEventListener('click', (event) => {
             event.preventDefault();
+            if (event.detail > 0) {
+                link.blur();
+            }
             setActiveSection(id);
             smoothScrollTo(target);
             if (window.history && typeof window.history.replaceState === 'function') {
