@@ -1,5 +1,5 @@
 /* ==========================================================================
-   layout.css — Estructura de página, secciones full-viewport y scroll-snap
+   layout.css — estructura de pagina, secciones full-viewport y scroll-snap
    ========================================================================== */
 
 .page-container {
@@ -11,7 +11,7 @@
     padding-block: 0;
 }
 
-/* Secciones a pantalla completa centradas vertical y horizontalmente */
+/* secciones a pantalla completa centradas vertical y horizontalmente */
 .page-section {
     display: flex;
     flex-direction: column;
@@ -27,13 +27,13 @@
     width: 100%;
 }
 
-/* Scroll-snap obligatorio solo en escritorios amplios con movimiento habilitado */
+/* scroll-snap obligatorio solo en escritorios amplios con movimiento habilitado */
 @media (min-width: 992px) and (min-height: 700px) and (prefers-reduced-motion: no-preference) {
     html {
         scroll-snap-type: y mandatory;
     }
 
-    /* Desactiva snap temporalmente durante el desplazamiento suave de la navbar */
+    /* desactiva snap temporalmente durante el desplazamiento suave de la navbar */
     html.is-scrolling-to-section {
         scroll-snap-type: none;
     }
@@ -48,7 +48,7 @@
     }
 }
 
-/* Sin snap ni altura forzada de 100svh con reducción de movimiento */
+/* sin snap ni altura forzada de 100svh con reduccion de movimiento */
 @media (prefers-reduced-motion: reduce) {
     html {
         scroll-snap-type: none;
@@ -66,7 +66,7 @@
     }
 }
 
-/* Impresión limpia */
+/* impresion limpia */
 @media print {
     html {
         scroll-snap-type: none !important;

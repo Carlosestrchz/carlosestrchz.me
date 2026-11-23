@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog de Carlos Estrada | Developer</title>
     <meta name="description" content="Página personal de Carlos Estrada, desarrollador Java Full Stack Jr. con enfoque en IoT, backend y nube.">
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="css/tokens.css">
@@ -17,7 +18,7 @@
 </head>
 <body>
 
-    <!-- Fondo animado aurora -->
+    <!-- fondo animado aurora -->
     <div class="bg-aurora" aria-hidden="true">
         <span class="bg-aurora__blob bg-aurora__blob--1"></span>
         <span class="bg-aurora__blob bg-aurora__blob--2"></span>
@@ -25,7 +26,7 @@
         <span class="bg-aurora__blob bg-aurora__blob--4"></span>
     </div>
 
-    <!-- Hero -->
+    <!-- hero -->
     <header id="inicio" class="hero page-section position-relative overflow-hidden">
         <div class="hero__content position-relative text-center">
             <p class="hero__eyebrow mb-0">Hola, ¡Has llegado a mi página personal!</p>
@@ -43,7 +44,7 @@
 
     <main class="page-main">
 
-        <!-- Sobre mí -->
+        <!-- sobre mi -->
         <section id="sobre-mi" class="page-section" aria-labelledby="sobre-mi-titulo">
             <div class="container page-container page-section__inner" data-reveal>
                 <div class="row g-4 g-md-5 align-items-start">
@@ -86,50 +87,180 @@
             </div>
         </section>
 
-        <!-- Proyectos -->
+        <!-- proyectos -->
         <section id="proyectos" class="page-section" aria-labelledby="proyectos-titulo">
-            <div class="container page-container page-section__inner" data-reveal>
-                <h2 id="proyectos-titulo" class="section-title">Proyectos académicos y profesionales</h2>
-                <div class="row row-cols-1 row-cols-md-2 g-4">
-                    <div class="col">
-                        <article class="card glass-card glass-card--lg project-card h-100">
-                            <div class="card-body d-flex flex-column">
-                                <div class="project-card__icon project-card__icon--1 d-flex align-items-center justify-content-center" aria-hidden="true">
-                                    <img src="img/WattGuard.png" alt="Logo de WattGuard" class="project-card__logo">
-                                </div>
-                                <h3 class="card-title project-card__title">WattGuard</h3>
-                                <p class="project-card__meta">Hackathon Talent Land 2026 · Qualcomm Sustainable Power Cities</p>
-                                <p class="card-text project-card__text flex-grow-1">Plataforma IoT con modelo de IA en el borde que monitorea el consumo eléctrico y lo ajusta de forma automática: apaga dispositivos en desuso o no prioritarios y puede desactivar nodos ante sobrecargas o exceso de temperatura. La app móvil está desarrollada con Dart y Flutter.</p>
-                                <ul class="list-unstyled d-flex flex-wrap gap-2 mb-3">
-                                    <li class="badge tech-badge">IoT</li>
-                                    <li class="badge tech-badge">Edge AI</li>
-                                    <li class="badge tech-badge">Dart</li>
-                                    <li class="badge tech-badge">Flutter</li>
-                                    <li class="badge tech-badge">C</li>
-                                    <li class="badge tech-badge">PlatformIO</li>
-                                </ul>
-                                <a href="https://github.com/Carlosestrchz/wattguard" target="_blank" rel="noopener noreferrer" class="link-accent align-self-start">Más información →</a>
+            <div class="page-section__inner" data-reveal>
+                <div class="container page-container">
+                    <h2 id="proyectos-titulo" class="section-title">Proyectos académicos y profesionales</h2>
+                </div>
+                <div class="projects-carousel" data-projects-carousel>
+                    <div class="projects-carousel__track">
+                        <div class="projects-carousel__group">
+                            <div class="projects-carousel__item">
+                                <article class="card glass-card glass-card--lg project-card h-100">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="project-card__icon project-card__icon--1 d-flex align-items-center justify-content-center" aria-hidden="true">
+                                            <img src="img/WattGuard.png" alt="Logo de WattGuard" class="project-card__logo">
+                                        </div>
+                                        <h3 class="card-title project-card__title">WattGuard</h3>
+                                        <p class="project-card__meta">Hackathon Talent Land 2026 · Qualcomm Sustainable Power Cities</p>
+                                        <p class="card-text project-card__text flex-grow-1">Plataforma IoT con modelo de IA en el borde que monitorea el consumo eléctrico y lo ajusta de forma automática: apaga dispositivos en desuso o no prioritarios y puede desactivar nodos ante sobrecargas o exceso de temperatura. La app móvil está desarrollada con Dart y Flutter.</p>
+                                        <ul class="list-unstyled d-flex flex-wrap gap-2 mb-3">
+                                            <li class="badge tech-badge">IoT</li>
+                                            <li class="badge tech-badge">Edge AI</li>
+                                            <li class="badge tech-badge">Dart</li>
+                                            <li class="badge tech-badge">Flutter</li>
+                                            <li class="badge tech-badge">C</li>
+                                            <li class="badge tech-badge">PlatformIO</li>
+                                        </ul>
+                                        <a href="https://github.com/Carlosestrchz/wattguard" target="_blank" rel="noopener noreferrer" class="link-accent align-self-start">Más información →</a>
+                                    </div>
+                                </article>
                             </div>
-                        </article>
-                    </div>
-                    <div class="col">
-                        <article class="card glass-card glass-card--lg project-card h-100">
-                            <div class="card-body d-flex flex-column">
-                                <div class="project-card__icon project-card__icon--2 d-flex align-items-center justify-content-center" aria-hidden="true">
-                                    <img src="img/signet-logo-white-trim.jpeg" alt="Logo de signet" class="project-card__logo">
-                                </div>
-                                <h3 class="card-title project-card__title">Signet</h3>
-                                <p class="project-card__meta">Hackathon Solana Builder 2026</p>
-                                <p class="card-text project-card__text flex-grow-1">Protocolo distribuido que funciona sobre la blockchain de Solana para registrar y validar la propiedad de archivos digitales mediante su huella criptográfica SHA-256.</p>
-                                <ul class="list-unstyled d-flex flex-wrap gap-2 mb-3">
-                                    <li class="badge tech-badge">blockchain</li>
-                                    <li class="badge tech-badge">Criptografía</li>
-                                    <li class="badge tech-badge">Rust</li>
-                                    <li class="badge tech-badge">Solana</li>
-                                </ul>
-                                <a href="https://github.com/Carlosestrchz/signet" target="_blank" rel="noopener noreferrer" class="link-accent align-self-start">Más información →</a>
+                            <div class="projects-carousel__item">
+                                <article class="card glass-card glass-card--lg project-card h-100">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="project-card__icon project-card__icon--2 d-flex align-items-center justify-content-center" aria-hidden="true">
+                                            <img src="img/signet-logo-white-trim.jpeg" alt="Logo de signet" class="project-card__logo">
+                                        </div>
+                                        <h3 class="card-title project-card__title">Signet</h3>
+                                        <p class="project-card__meta">Hackathon Solana Builder 2026</p>
+                                        <p class="card-text project-card__text flex-grow-1">Protocolo distribuido que funciona sobre la blockchain de Solana para registrar y validar la propiedad de archivos digitales mediante su huella criptográfica SHA-256.</p>
+                                        <ul class="list-unstyled d-flex flex-wrap gap-2 mb-3">
+                                            <li class="badge tech-badge">blockchain</li>
+                                            <li class="badge tech-badge">Criptografía</li>
+                                            <li class="badge tech-badge">Rust</li>
+                                            <li class="badge tech-badge">Solana</li>
+                                        </ul>
+                                        <a href="https://github.com/Carlosestrchz/signet" target="_blank" rel="noopener noreferrer" class="link-accent align-self-start">Más información →</a>
+                                    </div>
+                                </article>
                             </div>
-                        </article>
+                            <div class="projects-carousel__item">
+                                <article class="card glass-card glass-card--lg project-card h-100">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="project-card__icon project-card__icon--3 d-flex align-items-center justify-content-center" aria-hidden="true">
+                                            <img src="img/apex-iron.jpg" alt="Logo de Apex Iron" class="project-card__logo">
+                                        </div>
+                                        <h3 class="card-title project-card__title">Apex Iron</h3>
+                                        <p class="project-card__meta">Bootcamp Generation México</p>
+                                        <p class="card-text project-card__text flex-grow-1">Plataforma e-commerce de productos electrónicos de consumo, componentes de cómputo (RAM, SSD, chasis y periféricos), computadoras portátiles y PCs armadas a medida.</p>
+                                        <ul class="list-unstyled d-flex flex-wrap gap-2 mb-3">
+                                            <li class="badge tech-badge">HTML</li>
+                                            <li class="badge tech-badge">CSS</li>
+                                            <li class="badge tech-badge">JavaScript</li>
+                                            <li class="badge tech-badge">Bootstrap</li>
+                                            <li class="badge tech-badge">SQL</li>
+                                            <li class="badge tech-badge">Spring Boot</li>
+                                        </ul>
+                                        <a href="https://apex-iron.carlosestrchz.me/" target="_blank" rel="noopener noreferrer" class="link-accent align-self-start">Más información →</a>
+                                    </div>
+                                </article>
+                            </div>
+                            <div class="projects-carousel__item">
+                                <article class="card glass-card glass-card--lg project-card h-100">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="project-card__icon project-card__icon--4 d-flex align-items-center justify-content-center" aria-hidden="true">
+                                            <img src="img/aironcito.jpeg" alt="Logo de Ironcito" class="project-card__logo">
+                                        </div>
+                                        <h3 class="card-title project-card__title">Ironcito</h3>
+                                        <p class="project-card__meta">Bootcamp Business AI Builder · Oracle Next Education</p>
+                                        <p class="card-text project-card__text flex-grow-1">Agente de IA integrado dentro de Apex Iron y potenciado con flujos de automatización en N8N que guía a usuarios sin conocimientos técnicos en la compra de componentes y periféricos: valida la compatibilidad con sus equipos de cómputo y sugiere alternativas compatibles dentro del catálogo disponible.</p>
+                                        <ul class="list-unstyled d-flex flex-wrap gap-2 mb-3">
+                                            <li class="badge tech-badge">N8N</li>
+                                            <li class="badge tech-badge">API</li>
+                                            <li class="badge tech-badge">WebHooks</li>
+                                            <li class="badge tech-badge">Prompt Engineering</li>
+                                            <li class="badge tech-badge">Fine-Tuning</li>
+                                        </ul>
+                                        <span class="project-card__footer-spacer" aria-hidden="true"></span>
+                                    </div>
+                                </article>
+                            </div>
+                        </div>
+                        <div class="projects-carousel__group" aria-hidden="true">
+                            <div class="projects-carousel__item">
+                                <article class="card glass-card glass-card--lg project-card h-100">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="project-card__icon project-card__icon--1 d-flex align-items-center justify-content-center" aria-hidden="true">
+                                            <img src="img/WattGuard.png" alt="" class="project-card__logo">
+                                        </div>
+                                        <h3 class="card-title project-card__title">WattGuard</h3>
+                                        <p class="project-card__meta">Hackathon Talent Land 2026 · Qualcomm Sustainable Power Cities</p>
+                                        <p class="card-text project-card__text flex-grow-1">Plataforma IoT con modelo de IA en el borde que monitorea el consumo eléctrico y lo ajusta de forma automática: apaga dispositivos en desuso o no prioritarios y puede desactivar nodos ante sobrecargas o exceso de temperatura. La app móvil está desarrollada con Dart y Flutter.</p>
+                                        <ul class="list-unstyled d-flex flex-wrap gap-2 mb-3">
+                                            <li class="badge tech-badge">IoT</li>
+                                            <li class="badge tech-badge">Edge AI</li>
+                                            <li class="badge tech-badge">Dart</li>
+                                            <li class="badge tech-badge">Flutter</li>
+                                            <li class="badge tech-badge">C</li>
+                                            <li class="badge tech-badge">PlatformIO</li>
+                                        </ul>
+                                        <a href="https://github.com/Carlosestrchz/wattguard" target="_blank" rel="noopener noreferrer" tabindex="-1" class="link-accent align-self-start">Más información →</a>
+                                    </div>
+                                </article>
+                            </div>
+                            <div class="projects-carousel__item">
+                                <article class="card glass-card glass-card--lg project-card h-100">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="project-card__icon project-card__icon--2 d-flex align-items-center justify-content-center" aria-hidden="true">
+                                            <img src="img/signet-logo-white-trim.jpeg" alt="" class="project-card__logo">
+                                        </div>
+                                        <h3 class="card-title project-card__title">Signet</h3>
+                                        <p class="project-card__meta">Hackathon Solana Builder 2026</p>
+                                        <p class="card-text project-card__text flex-grow-1">Protocolo distribuido que funciona sobre la blockchain de Solana para registrar y validar la propiedad de archivos digitales mediante su huella criptográfica SHA-256.</p>
+                                        <ul class="list-unstyled d-flex flex-wrap gap-2 mb-3">
+                                            <li class="badge tech-badge">blockchain</li>
+                                            <li class="badge tech-badge">Criptografía</li>
+                                            <li class="badge tech-badge">Rust</li>
+                                            <li class="badge tech-badge">Solana</li>
+                                        </ul>
+                                        <a href="https://github.com/Carlosestrchz/signet" target="_blank" rel="noopener noreferrer" tabindex="-1" class="link-accent align-self-start">Más información →</a>
+                                    </div>
+                                </article>
+                            </div>
+                            <div class="projects-carousel__item">
+                                <article class="card glass-card glass-card--lg project-card h-100">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="project-card__icon project-card__icon--3 d-flex align-items-center justify-content-center" aria-hidden="true">
+                                            <img src="img/apex-iron.jpg" alt="" class="project-card__logo">
+                                        </div>
+                                        <h3 class="card-title project-card__title">Apex Iron</h3>
+                                        <p class="project-card__meta">Bootcamp Generation México</p>
+                                        <p class="card-text project-card__text flex-grow-1">Plataforma e-commerce de productos electrónicos de consumo, componentes de cómputo (RAM, SSD, chasis y periféricos), computadoras portátiles y PCs armadas a medida.</p>
+                                        <ul class="list-unstyled d-flex flex-wrap gap-2 mb-3">
+                                            <li class="badge tech-badge">HTML</li>
+                                            <li class="badge tech-badge">CSS</li>
+                                            <li class="badge tech-badge">JavaScript</li>
+                                            <li class="badge tech-badge">Bootstrap</li>
+                                            <li class="badge tech-badge">SQL</li>
+                                            <li class="badge tech-badge">Spring Boot</li>
+                                        </ul>
+                                        <a href="https://apex-iron.carlosestrchz.me/" target="_blank" rel="noopener noreferrer" tabindex="-1" class="link-accent align-self-start">Más información →</a>
+                                    </div>
+                                </article>
+                            </div>
+                            <div class="projects-carousel__item">
+                                <article class="card glass-card glass-card--lg project-card h-100">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="project-card__icon project-card__icon--4 d-flex align-items-center justify-content-center" aria-hidden="true">
+                                            <img src="img/aironcito.jpeg" alt="" class="project-card__logo">
+                                        </div>
+                                        <h3 class="card-title project-card__title">Ironcito</h3>
+                                        <p class="project-card__meta">Bootcamp Business AI Builder · Oracle Next Education</p>
+                                        <p class="card-text project-card__text flex-grow-1">Agente de IA integrado dentro de Apex Iron y potenciado con flujos de automatización en N8N que guía a usuarios sin conocimientos técnicos en la compra de componentes y periféricos: valida la compatibilidad con sus equipos de cómputo y sugiere alternativas compatibles dentro del catálogo disponible.</p>
+                                        <ul class="list-unstyled d-flex flex-wrap gap-2 mb-3">
+                                            <li class="badge tech-badge">N8N</li>
+                                            <li class="badge tech-badge">API</li>
+                                            <li class="badge tech-badge">WebHooks</li>
+                                            <li class="badge tech-badge">Prompt Engineering</li>
+                                            <li class="badge tech-badge">Fine-Tuning</li>
+                                        </ul>
+                                        <span class="project-card__footer-spacer" aria-hidden="true"></span>
+                                    </div>
+                                </article>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -137,7 +268,7 @@
 
     </main>
 
-    <!-- Contacto -->
+    <!-- contacto -->
     <footer id="contacto" class="site-footer page-section">
         <div class="container page-container page-section__inner">
             <div class="card glass-card glass-card--lg">
@@ -154,7 +285,7 @@
         </div>
     </footer>
 
-    <!-- Navegación flotante -->
+    <!-- navegacion flotante -->
     <nav class="floating-nav" aria-label="Navegación principal" data-floating-nav>
         <ul class="floating-nav__list">
             <li>

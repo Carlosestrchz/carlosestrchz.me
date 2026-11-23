@@ -4,7 +4,7 @@
     const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     const supportsObserver = 'IntersectionObserver' in window;
 
-    /* ---------- Animación progresiva de aparición ([data-reveal]) ---------- */
+    /* ---------- animacion progresiva de aparicion ([data-reveal]) ---------- */
     if (!reducedMotionQuery.matches && supportsObserver) {
         const revealObserver = new IntersectionObserver((entries, obs) => {
             entries.forEach((entry) => {
@@ -20,7 +20,211 @@
         });
     }
 
-    /* ---------- Barra de navegación flotante ([data-floating-nav]) ---------- */
+    /* ---------- carrusel de proyectos: bucle continuo + arrastre manual ---------- */
+    const projectsCarousel = document.querySelector('[data-projects-carousel]');
+    if (projectsCarousel && !reducedMotionQuery.matches) {
+        const track = projectsCarousel.querySelector('.projects-carousel__track');
+        const firstGroup = projectsCarousel.querySelector('.projects-carousel__group');
+
+        if (track && firstGroup) {
+            projectsCarousel.classList.add('has-js-carousel');
+
+            let loopWidth = firstGroup.offsetWidth;
+            let offset = 0;
+            let isInView = !supportsObserver;
+            let isCardHovered = false;
+            let isCardFocused = false;
+
+            let activePointerId = null;
+            let pointerStartX = 0;
+            let dragStartOffset = 0;
+            let isDragging = false;
+            let suppressNextClick = false;
+            let lastPointerX = 0;
+            let lastPointerTime = 0;
+            // velocidad de desplazamiento en px/ms
+            let velocity = 0;
+
+            const getDurationSeconds = () => {
+                const raw = window.getComputedStyle(projectsCarousel).getPropertyValue('--carousel-duration');
+                const parsed = parseFloat(raw);
+                return Number.isFinite(parsed) && parsed > 0 ? parsed : 38;
+            };
+
+            const wrapOffset = (value) => {
+                if (loopWidth <= 0) return 0;
+                let wrapped = value % loopWidth;
+                if (wrapped > 0) wrapped -= loopWidth;
+                return wrapped;
+            };
+
+            const renderTrack = () => {
+                track.style.setProperty('--carousel-x', `${offset}px`);
+            };
+
+            const updateLoopWidth = () => {
+                loopWidth = firstGroup.offsetWidth;
+                offset = wrapOffset(offset);
+                renderTrack();
+            };
+
+            if (supportsObserver) {
+                const carouselObserver = new IntersectionObserver(
+                    (entries) => {
+                        entries.forEach((entry) => {
+                            isInView = entry.isIntersecting;
+                        });
+                    },
+                    { threshold: 0.1 }
+                );
+                carouselObserver.observe(projectsCarousel);
+            }
+
+            // pausa mientras el cursor o foco esta sobre cualquier tarjeta
+            track.addEventListener('pointerover', (event) => {
+                if (event.target.closest('.project-card')) {
+                    isCardHovered = true;
+                }
+            });
+
+            track.addEventListener('pointerout', (event) => {
+                const related = event.relatedTarget;
+                if (!related || !track.contains(related) || !related.closest('.project-card')) {
+                    isCardHovered = false;
+                }
+            });
+
+            track.addEventListener('focusin', (event) => {
+                if (event.target.closest('.project-card')) {
+                    isCardFocused = true;
+                }
+            });
+
+            track.addEventListener('focusout', (event) => {
+                const related = event.relatedTarget;
+                if (!related || !track.contains(related) || !related.closest('.project-card')) {
+                    isCardFocused = false;
+                }
+            });
+
+            // evitar el arrastre nativo de imagenes/enlaces dentro del carrusel
+            projectsCarousel.addEventListener('dragstart', (event) => {
+                event.preventDefault();
+            });
+
+            // arrastre manual presionando cualquier tarjeta de proyecto
+            projectsCarousel.addEventListener('pointerdown', (event) => {
+                if (event.pointerType === 'mouse' && event.button !== 0) return;
+                if (!event.target.closest('.project-card')) return;
+
+                activePointerId = event.pointerId;
+                pointerStartX = event.clientX;
+                dragStartOffset = offset;
+                lastPointerX = event.clientX;
+                lastPointerTime = performance.now();
+                velocity = 0;
+                isDragging = false;
+                suppressNextClick = false;
+            });
+
+            projectsCarousel.addEventListener('pointermove', (event) => {
+                if (event.pointerId !== activePointerId) return;
+
+                const dx = event.clientX - pointerStartX;
+                if (!isDragging && Math.abs(dx) > 5) {
+                    isDragging = true;
+                    suppressNextClick = true;
+                    projectsCarousel.classList.add('is-dragging');
+                    if (typeof projectsCarousel.setPointerCapture === 'function') {
+                        projectsCarousel.setPointerCapture(event.pointerId);
+                    }
+                }
+
+                if (!isDragging) return;
+
+                const now = performance.now();
+                const dt = now - lastPointerTime;
+                if (dt > 0) {
+                    velocity = (event.clientX - lastPointerX) / dt;
+                    lastPointerX = event.clientX;
+                    lastPointerTime = now;
+                }
+
+                offset = wrapOffset(dragStartOffset + dx);
+                renderTrack();
+            });
+
+            const endDrag = (event) => {
+                if (event.pointerId !== activePointerId) return;
+                activePointerId = null;
+
+                if (isDragging) {
+                    isDragging = false;
+                    projectsCarousel.classList.remove('is-dragging');
+                    if (
+                        typeof projectsCarousel.hasPointerCapture === 'function' &&
+                        projectsCarousel.hasPointerCapture(event.pointerId)
+                    ) {
+                        projectsCarousel.releasePointerCapture(event.pointerId);
+                    }
+                    // si el usuario detuvo el puntero antes de soltar, no aplicar inercia residual
+                    if (performance.now() - lastPointerTime > 80) {
+                        velocity = 0;
+                    }
+                    window.setTimeout(() => {
+                        suppressNextClick = false;
+                    }, 0);
+                }
+            };
+
+            projectsCarousel.addEventListener('pointerup', endDrag);
+            projectsCarousel.addEventListener('pointercancel', endDrag);
+
+            // evita abrir enlaces al soltar despues de arrastrar
+            projectsCarousel.addEventListener(
+                'click',
+                (event) => {
+                    if (!suppressNextClick) return;
+                    event.preventDefault();
+                    event.stopPropagation();
+                    suppressNextClick = false;
+                },
+                true
+            );
+
+            window.addEventListener('resize', updateLoopWidth, { passive: true });
+            renderTrack();
+
+            let lastFrameTime = performance.now();
+            const tickCarousel = (now) => {
+                const dt = Math.min(0.05, (now - lastFrameTime) / 1000);
+                lastFrameTime = now;
+
+                if (loopWidth <= 0) {
+                    loopWidth = firstGroup.offsetWidth;
+                }
+
+                if (!isDragging && loopWidth > 0) {
+                    if (Math.abs(velocity) > 0.02) {
+                        offset = wrapOffset(offset + velocity * (dt * 1000));
+                        velocity *= Math.pow(0.92, dt * 60);
+                        if (Math.abs(velocity) <= 0.02) velocity = 0;
+                        renderTrack();
+                    } else if (isInView && !isCardHovered && !isCardFocused) {
+                        const speedPxPerSec = loopWidth / getDurationSeconds();
+                        offset = wrapOffset(offset - speedPxPerSec * dt);
+                        renderTrack();
+                    }
+                }
+
+                window.requestAnimationFrame(tickCarousel);
+            };
+
+            window.requestAnimationFrame(tickCarousel);
+        }
+    }
+
+    /* ---------- barra de navegacion flotante ([data-floating-nav]) ---------- */
     const floatingNav = document.querySelector('[data-floating-nav]');
     if (!floatingNav) return;
 
@@ -36,7 +240,7 @@
 
     if (!sections.length) return;
 
-    // Indicador deslizante para transiciones fluidas entre pestañas
+    // indicador deslizante para transiciones fluidas entre pestañas
     let indicator = null;
     if (navList) {
         indicator = document.createElement('li');
@@ -99,7 +303,7 @@
         return closestId;
     };
 
-    // Control de scroll programático: evita activar secciones intermedias al saltar desde la navbar
+    // control de scroll programatico: evita activar secciones intermedias al saltar desde la navbar
     let isProgrammaticScroll = false;
     let scrollAnimationId = null;
     let bottomActive = isAtPageBottom();
@@ -121,11 +325,11 @@
         const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
         if (target === sections[0].target) return 0;
 
-        // Usar métricas de layout sin transformar (evita desfase por translateY/scale del scroll-driven)
+        // usar metricas de layout sin transformar (evita desfase por translatey/scale del scroll-driven)
         const sectionTop = getLayoutTop(target);
         const sectionHeight = target.offsetHeight;
 
-        // Aterrizar centrado en la sección (o al inicio si la sección supera el alto del viewport)
+        // aterrizar centrado en la seccion (o al inicio si la seccion supera el alto del viewport)
         const rawY = sectionHeight > window.innerHeight
             ? sectionTop
             : sectionTop - (window.innerHeight - sectionHeight) / 2;
@@ -192,7 +396,7 @@
         scrollAnimationId = window.requestAnimationFrame(step);
     };
 
-    // Si el usuario interviene manualmente durante el desplazamiento, liberar el bloqueo al instante
+    // si el usuario interviene manualmente durante el desplazamiento, liberar el bloqueo al instante
     const scrollKeys = new Set(['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' ']);
     window.addEventListener('wheel', () => cancelProgrammaticScroll(true), { passive: true });
     window.addEventListener('touchstart', () => cancelProgrammaticScroll(true), { passive: true });
@@ -283,7 +487,7 @@
         { passive: true }
     );
 
-    // Posición inicial del indicador antes de activar su transición
+    // posicion inicial del indicador antes de activar su transicion
     setActiveSection(findCenterSectionId());
     if (indicator) {
         window.requestAnimationFrame(() => {

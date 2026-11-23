@@ -1,8 +1,8 @@
 /* ==========================================================================
-   components.css — Tema glassmorphism y componentes personalizados sobre Bootstrap 5
+   components.css — tema glassmorphism y componentes personalizados sobre bootstrap 5
    ========================================================================== */
 
-/* ---------- Utilidades de texto ---------- */
+/* ---------- utilidades de texto ---------- */
 .gradient-text {
     background: var(--gradient-accent);
     -webkit-background-clip: text;
@@ -19,7 +19,7 @@
     text-decoration: underline;
 }
 
-/* ---------- Fondo animado aurora ---------- */
+/* ---------- fondo animado aurora ---------- */
 .bg-aurora {
     position: fixed;
     inset: 0;
@@ -158,7 +158,7 @@
     }
 }
 
-/* ---------- Hero ---------- */
+/* ---------- hero ---------- */
 .hero {
     padding-inline: var(--space-6);
 }
@@ -209,7 +209,7 @@
     }
 }
 
-/* ---------- Botones (sobre Bootstrap .btn) ---------- */
+/* ---------- botones (sobre bootstrap .btn) ---------- */
 .btn-cta {
     --bs-btn-padding-y: var(--space-3);
     --bs-btn-padding-x: var(--space-8);
@@ -247,14 +247,14 @@
     --bs-btn-active-color: var(--color-text);
 }
 
-/* Variante: al hover se invierte (fondo blanco, texto negro) */
+/* variante: al hover se invierte (fondo blanco, texto negro) */
 .btn-cta--invert-hover {
     --bs-btn-hover-bg: var(--color-white);
     --bs-btn-hover-border-color: var(--color-white);
     --bs-btn-hover-color: var(--color-black);
 }
 
-/* ---------- Card glassmorphism (sobre Bootstrap .card) ---------- */
+/* ---------- card glassmorphism (sobre bootstrap .card) ---------- */
 .glass-card {
     --bs-card-bg: var(--color-surface);
     --bs-card-border-color: var(--color-border);
@@ -287,7 +287,7 @@
     color: var(--color-text-muted);
 }
 
-/* ---------- Sobre mí ---------- */
+/* ---------- sobre mi ---------- */
 .about__title {
     margin-bottom: var(--space-6);
     font-size: 1.875rem;
@@ -301,7 +301,7 @@
     line-height: 1.625;
 }
 
-/* ---------- Tags de tecnologías (sobre Bootstrap .badge) ---------- */
+/* ---------- tags de tecnologias (sobre bootstrap .badge) ---------- */
 .tech-badge {
     --bs-badge-padding-x: var(--space-3);
     --bs-badge-padding-y: var(--space-1);
@@ -314,7 +314,7 @@
     border: 1px solid var(--color-accent-border);
 }
 
-/* ---------- Proyectos y tarjetas de showcase ---------- */
+/* ---------- proyectos y tarjetas de showcase ---------- */
 .section-title {
     margin-bottom: var(--space-8);
     font-size: 2.25rem;
@@ -344,8 +344,13 @@
     object-fit: contain;
 }
 
-.project-card__icon--2 img {
+.project-card__icon--2 img,
+.project-card__icon--3 img {
     padding: 0.25rem;
+}
+
+.project-card__icon--4 img {
+    padding: 0.125rem;
 }
 
 .project-card__title {
@@ -366,7 +371,110 @@
     color: var(--color-text-muted);
 }
 
-/* ---------- Footer ---------- */
+.project-card__footer-spacer {
+    display: block;
+    min-height: 1.5rem;
+}
+
+/* ---------- carrusel continuo de proyectos ---------- */
+.projects-carousel {
+    width: 100%;
+    overflow: hidden;
+    padding-block: var(--space-1);
+    touch-action: pan-y;
+}
+
+.projects-carousel__track {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+    animation: projects-marquee var(--carousel-duration) linear infinite;
+}
+
+.projects-carousel.has-js-carousel .projects-carousel__track {
+    animation: none;
+    transform: translate3d(var(--carousel-x, 0px), 0, 0);
+}
+
+.projects-carousel.has-js-carousel .project-card {
+    cursor: grab;
+}
+
+.projects-carousel.is-dragging,
+.projects-carousel.is-dragging .project-card {
+    cursor: grabbing;
+    user-select: none;
+}
+
+.projects-carousel.is-pending .projects-carousel__track,
+.projects-carousel__track:has(.project-card:hover),
+.projects-carousel__track:has(.project-card:focus-within) {
+    animation-play-state: paused;
+}
+
+.projects-carousel__group {
+    display: flex;
+    align-items: stretch;
+    gap: var(--carousel-gap);
+    padding-left: var(--carousel-gap);
+}
+
+.projects-carousel__item {
+    flex: 0 0 auto;
+    width: var(--carousel-card-width);
+}
+
+@keyframes projects-marquee {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        transform: translate3d(-50%, 0, 0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .projects-carousel {
+        overflow: visible;
+    }
+
+    .projects-carousel__track,
+    .projects-carousel.has-js-carousel .projects-carousel__track {
+        width: 100%;
+        animation: none;
+        transform: none;
+        will-change: auto;
+    }
+
+    .projects-carousel.has-js-carousel .project-card {
+        cursor: auto;
+    }
+
+    .projects-carousel__group {
+        display: grid;
+        grid-template-columns: 1fr;
+        width: 100%;
+        max-width: var(--container-6xl);
+        margin-inline: auto;
+        padding-inline: var(--space-6);
+    }
+
+    .projects-carousel__group[aria-hidden="true"] {
+        display: none;
+    }
+
+    .projects-carousel__item {
+        width: auto;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) and (min-width: 768px) {
+    .projects-carousel__group {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* ---------- footer ---------- */
 .site-footer__title {
     margin-bottom: var(--space-2);
     font-size: 1.5rem;
@@ -378,7 +486,7 @@
     color: var(--color-text-muted);
 }
 
-/* ---------- Barra de navegación flotante ---------- */
+/* ---------- barra de navegacion flotante ---------- */
 .floating-nav {
     position: fixed;
     left: 50%;
@@ -506,7 +614,7 @@
     }
 }
 
-/* ---------- Efecto de difuminado ligado al scroll (CSS Scroll-Driven) ---------- */
+/* ---------- efecto de difuminado ligado al scroll (css scroll-driven) ---------- */
 @keyframes section-enter {
     from {
         opacity: var(--scroll-fade-opacity);
@@ -554,7 +662,7 @@
     }
 }
 
-/* ---------- Animación de aparición (la activa js/main.js) ---------- */
+/* ---------- animacion de aparicion (la activa js/main.js) ---------- */
 .reveal {
     opacity: 0;
     transform: translateY(var(--space-10));
@@ -566,7 +674,7 @@
     transform: translateY(0);
 }
 
-/* ---------- Impresión limpia (@media print) ---------- */
+/* ---------- impresion limpia (@media print) ---------- */
 @media print {
     .page-section {
         animation: none !important;
@@ -637,6 +745,34 @@
         padding-block: var(--space-6);
         break-inside: avoid;
         page-break-inside: avoid;
+    }
+
+    .projects-carousel {
+        overflow: visible;
+    }
+
+    .projects-carousel__track {
+        width: 100%;
+        animation: none !important;
+        transform: none !important;
+    }
+
+    .projects-carousel__group {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--space-4);
+        width: 100%;
+        max-width: var(--container-6xl);
+        margin-inline: auto;
+        padding-inline: var(--space-6);
+    }
+
+    .projects-carousel__group[aria-hidden="true"] {
+        display: none !important;
+    }
+
+    .projects-carousel__item {
+        width: auto;
     }
 
     .floating-nav {

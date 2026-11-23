@@ -1,5 +1,5 @@
 /* ==========================================================================
-   base.css — Ajustes base de elementos HTML sobre Bootstrap Reboot (sin clases)
+   base.css — ajustes base de elementos html sobre bootstrap reboot (sin clases)
    ========================================================================== */
 
 html {
@@ -24,7 +24,7 @@ a {
     text-decoration: none;
 }
 
-/* Impresión limpia (base) */
+/* impresion limpia (base) */
 @media print {
     html {
         scroll-snap-type: none !important;
