@@ -1,4 +1,5 @@
-:root {
+:root,
+[data-bs-theme="dark"] {
     /* Colores base */
     --color-bg: #0a0a0a;
     --color-text: #f8fafc;
@@ -16,9 +17,19 @@
 
     /* Superficies y bordes (efecto "glass") */
     --color-surface: rgba(255, 255, 255, 0.03);
+    --color-surface-elevated: rgba(255, 255, 255, 0.05);
     --color-border: rgba(255, 255, 255, 0.1);
     --color-border-strong: rgba(255, 255, 255, 0.2);
     --color-overlay-hover: rgba(255, 255, 255, 0.1);
+
+    /* Efectos y capas (navegación flotante) */
+    --shadow-floating: 0 8px 32px rgba(0, 0, 0, 0.45);
+    --blur-floating: 16px;
+    --opacity-nav-inactive: 0.6;
+    --opacity-nav-hover: 0.85;
+    --z-floating-nav: 1030;
+    --floating-nav-offset: var(--space-4);
+    --floating-nav-clearance: 6.5rem;
 
     /* Acentos con transparencia */
     --color-accent-glow: rgba(99, 102, 241, 0.2);
@@ -57,6 +68,19 @@
 
     /* Movimiento */
     --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-nav: cubic-bezier(0.22, 1, 0.36, 1);
     --transition-fast: 150ms var(--ease);
+    --transition-nav: 320ms var(--ease-nav);
     --transition-reveal: 700ms var(--ease);
+
+    /* Mapeo de variables de Bootstrap 5 a los design tokens */
+    --bs-body-bg: var(--color-bg);
+    --bs-body-color: var(--color-text);
+    --bs-body-font-family: var(--font-sans);
+    --bs-secondary-color: var(--color-text-muted);
+    --bs-border-color: var(--color-border);
+    --bs-link-color: var(--color-accent-light);
+    --bs-link-hover-color: var(--color-accent-lighter);
+    --bs-primary: var(--color-accent);
+    --bs-primary-rgb: 99, 102, 241;
 }

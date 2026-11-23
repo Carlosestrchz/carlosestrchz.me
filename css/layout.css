@@ -1,11 +1,9 @@
 /* ==========================================================================
-   layout.css — Estructura de página: contenedores, rejillas, espaciado
+   layout.css — Estructura de página y ritmo vertical sobre el grid de Bootstrap
    ========================================================================== */
 
-.container {
-    width: 100%;
+.page-container {
     max-width: var(--container-6xl);
-    margin-inline: auto;
     padding-inline: var(--space-6);
 }
 
@@ -13,28 +11,21 @@
     padding-block: var(--space-20);
 }
 
-/* Separación vertical entre hijos directos (patrón "stack") */
+/* Separación vertical entre secciones directas (patrón "stack") */
 .stack-xl > * + * {
     margin-top: var(--space-32);
 }
 
-/* Sección "Sobre mí": 1 columna en móvil, 2 en escritorio */
-.about {
-    display: grid;
-    gap: var(--space-12);
-    align-items: center;
+.page-main > section[id] {
+    scroll-margin-top: var(--space-12);
 }
 
-/* Rejilla genérica de 2 columnas (proyectos, habilidades) */
-.grid-2 {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-6);
-}
+@media print {
+    .page-main {
+        padding-block: var(--space-6);
+    }
 
-@media (min-width: 768px) {
-    .about,
-    .grid-2 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    .stack-xl > * + * {
+        margin-top: var(--space-8);
     }
 }
