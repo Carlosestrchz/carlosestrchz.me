@@ -61,6 +61,17 @@
     --carousel-gap: var(--space-6);
     --carousel-duration: 38s;
 
+    /* banners de infraestructura */
+    --infra-banner-height: clamp(7.5rem, 19svh, 12.5rem);
+    --infra-img-filter: brightness(0.78) contrast(0.9) saturate(0.9);
+    --infra-img-filter-hover: brightness(0.92) contrast(0.96) saturate(1);
+    --infra-lift-y: -0.45rem;
+    --infra-lift-scale: 1.025;
+    --infra-dim-opacity: 0.45;
+    --shadow-infra: 0 6px 20px rgba(0, 0, 0, 0.3);
+    --shadow-infra-active: 0 18px 40px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.35);
+    --transition-infra: 260ms var(--ease-nav);
+
     /* acentos con transparencia */
     --color-accent-glow: rgba(99, 102, 241, 0.2);
     --color-accent-tint: rgba(99, 102, 241, 0.1);

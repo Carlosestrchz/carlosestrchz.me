@@ -474,6 +474,85 @@
     }
 }
 
+/* ---------- infraestructura ---------- */
+.infra-intro {
+    margin-bottom: var(--space-6);
+}
+
+.infra-intro__text {
+    color: var(--color-text-muted);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+}
+
+.infra-banner {
+    position: relative;
+    display: block;
+    height: var(--infra-banner-height);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+    box-shadow: var(--shadow-infra);
+    transition: transform var(--transition-infra),
+                opacity var(--transition-infra),
+                filter var(--transition-infra),
+                box-shadow var(--transition-infra),
+                border-color var(--transition-infra);
+}
+
+.infra-banner__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    filter: var(--infra-img-filter);
+    transition: transform var(--transition-infra),
+                filter var(--transition-infra);
+}
+
+.infra-banner:hover,
+.infra-banner:focus-visible {
+    z-index: 2;
+    transform: translateY(var(--infra-lift-y)) scale(var(--infra-lift-scale));
+    border-color: var(--color-white);
+    box-shadow: var(--shadow-infra-active);
+}
+
+.infra-banner:focus-visible {
+    outline: 2px solid var(--color-accent-light);
+    outline-offset: 3px;
+}
+
+.infra-banner:hover .infra-banner__img,
+.infra-banner:focus-visible .infra-banner__img {
+    transform: scale(1.03);
+    filter: var(--infra-img-filter-hover);
+}
+
+.infra-grid:has(.infra-banner:hover) .infra-banner:not(:hover),
+.infra-grid:has(.infra-banner:focus-visible) .infra-banner:not(:focus-visible) {
+    opacity: var(--infra-dim-opacity);
+    filter: saturate(0.55) brightness(0.75);
+    transform: scale(0.985);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .infra-banner,
+    .infra-banner__img {
+        transition: none;
+    }
+
+    .infra-banner:hover,
+    .infra-banner:focus-visible,
+    .infra-banner:hover .infra-banner__img,
+    .infra-banner:focus-visible .infra-banner__img,
+    .infra-grid:has(.infra-banner:hover) .infra-banner:not(:hover),
+    .infra-grid:has(.infra-banner:focus-visible) .infra-banner:not(:focus-visible) {
+        transform: none;
+    }
+}
+
 /* ---------- footer ---------- */
 .site-footer__title {
     margin-bottom: var(--space-2);
@@ -713,6 +792,7 @@
     .about__text,
     .glass-card__text,
     .project-card__text,
+    .infra-intro__text,
     .site-footer__text {
         color: #374151 !important;
     }
@@ -773,6 +853,21 @@
 
     .projects-carousel__item {
         width: auto;
+    }
+
+    .infra-banner {
+        height: 9rem;
+        border-color: #d1d5db;
+        box-shadow: none !important;
+        opacity: 1 !important;
+        filter: none !important;
+        transform: none !important;
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .infra-banner__img {
+        filter: none !important;
     }
 
     .floating-nav {
