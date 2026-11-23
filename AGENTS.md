@@ -9,6 +9,7 @@ Guía de contexto, convenciones y reglas para agentes de IA que colaboren en est
 Sitio web personal de **Carlos Estrada** (`carloestrchz.me`) implementado como una **single-page estática** en español (`lang="es"`), orientada a **reclutadores de empleo**.
 
 ### Secciones actuales
+- **Fondo animado aurora (`<div class="bg-aurora" aria-hidden="true">`):** capa fija detrás de toda la página con 4 manchas difuminadas animadas solo por CSS (`transform`/`opacity`) con duraciones primas desfasadas, reemplazando el antiguo resplandor estático del hero.
 - **Hero (`<header id="inicio" class="hero">`):** presentación, rol profesional, resumen breve y accesos rápidos (`#proyectos`, `#contacto`).
 - **Sobre mí (`#sobre-mi`):** perfil personal/académico y tarjeta resumen con ubicación, idioma, tecnologías principales y enlace a LinkedIn.
 - **Proyectos (`#proyectos`):** tarjetas de proyectos alojados en GitHub (actualmente *WattGuard* y *Signet*).
@@ -41,7 +42,7 @@ El sitio funciona como **contenido estático directo, sin herramientas de build 
 │   ├── tokens.css                  # Design tokens (:root / [data-bs-theme="dark"]) y mapeo a variables --bs-*
 │   ├── base.css                    # Ajustes base de elementos HTML sobre Bootstrap Reboot + base @media print
 │   ├── layout.css                  # Contenedor máximo (.page-container) y ritmo vertical (.page-main, .stack-xl)
-│   └── components.css              # Tema glassmorphism, skins sobre .card/.btn/.badge, .hero, .site-footer, .floating-nav, .reveal y @media print
+│   └── components.css              # Tema glassmorphism, fondo .bg-aurora, skins sobre .card/.btn/.badge, .hero, .site-footer, .floating-nav, .reveal y @media print
 ├── js/
 │   └── main.js                     # Animaciones [data-reveal] y navegación activa/scroll suave de [data-floating-nav] con IntersectionObserver
 ├── img/
@@ -86,10 +87,15 @@ Tema oscuro (*dark mode*) con superficies tipo *glassmorphism* y acentos índigo
 | | `--color-border` | `rgba(255, 255, 255, 0.1)` | Borde de `.glass-card`, `.site-footer` y `.floating-nav` (`--bs-border-color`) |
 | | `--color-border-strong` | `rgba(255, 255, 255, 0.2)` | Borde de `.btn-cta--outline` |
 | | `--color-overlay-hover` | `rgba(255, 255, 255, 0.1)` | Hover de `.btn-cta--outline` |
-| **Acentos alfa** | `--color-accent-glow` | `rgba(99, 102, 241, 0.2)` | Resplandor `.hero__glow` |
+| **Acentos alfa** | `--color-accent-glow` | `rgba(99, 102, 241, 0.2)` | Gradientes de `.bg-aurora__blob` |
 | | `--color-accent-tint` | `rgba(99, 102, 241, 0.1)` | Fondo de `.tech-badge` |
 | | `--color-accent-border` | `rgba(99, 102, 241, 0.2)` | Borde de `.tech-badge` |
 | | `--color-accent-border-hover` | `rgba(99, 102, 241, 0.5)` | Hover de `.project-card` |
+| **Fondo aurora** | `--z-bg-aurora` | `-1` | Capa fija detrás de todo el contenido |
+| | `--blur-aurora` | `96px` | Desenfoque estático de `.bg-aurora__blob` |
+| | `--aurora-opacity-1..4` | `0.26`, `0.22`, `0.2`, `0.18` | Opacidades base de las 4 manchas |
+| | `--aurora-duration-1..4` | `37s`, `53s`, `71s`, `89s` | Duraciones primas para movimiento orgánico no repetitivo |
+| | `--aurora-delay-1..4` | `-11s`, `-29s`, `-43s`, `-61s` | Desfases negativos iniciales de las 4 manchas |
 | **Navegación flotante** | `--shadow-floating` | `0 8px 32px rgba(0, 0, 0, 0.45)` | Sombra suave de `.floating-nav` |
 | | `--blur-floating` | `16px` | `backdrop-filter` de `.floating-nav` |
 | | `--opacity-nav-inactive` | `0.6` | Opacidad de enlaces inactivos |
@@ -120,9 +126,9 @@ Tema oscuro (*dark mode*) con superficies tipo *glassmorphism* y acentos índigo
 ### 4.5 Convenciones de nombres (Bootstrap + BEM)
 - **Layout y componentes base:** clases nativas de Bootstrap 5 (`.container`, `.row`, `.row-cols-*`, `.col-*`, `.card`, `.card-body`, `.card-title`, `.card-text`, `.btn`, `.rounded-pill`, `.badge`, utilidades flex `d-flex`, `flex-column`, `flex-grow-1`, `gap-*`, `h-100`).
 - **Skins y componentes propios en BEM (`kebab-case`, inglés):**
-  - Bloques: `.hero`, `.btn-cta`, `.glass-card`, `.tech-badge`, `.project-card`, `.site-footer`, `.floating-nav`.
-  - Elementos (`__`): `.hero__glow`, `.hero__content`, `.hero__eyebrow`, `.hero__title`, `.hero__role`, `.hero__lead`, `.glass-card__title`, `.glass-card__text`, `.about__title`, `.about__text`, `.project-card__icon`, `.project-card__logo`, `.project-card__title`, `.project-card__meta`, `.project-card__text`, `.site-footer__title`, `.site-footer__text`, `.floating-nav__list`, `.floating-nav__indicator`, `.floating-nav__link`, `.floating-nav__icon`, `.floating-nav__label`.
-  - Modificadores (`--`): `.btn-cta--primary`, `.btn-cta--outline`, `.btn-cta--invert-hover`, `.btn-cta--sm`, `.glass-card--lg`, `.glass-card--md`, `.project-card__icon--1`, `.project-card__icon--2`.
+  - Bloques: `.bg-aurora`, `.hero`, `.btn-cta`, `.glass-card`, `.tech-badge`, `.project-card`, `.site-footer`, `.floating-nav`.
+  - Elementos (`__`): `.bg-aurora__blob`, `.hero__content`, `.hero__eyebrow`, `.hero__title`, `.hero__role`, `.hero__lead`, `.glass-card__title`, `.glass-card__text`, `.about__title`, `.about__text`, `.project-card__icon`, `.project-card__logo`, `.project-card__title`, `.project-card__meta`, `.project-card__text`, `.site-footer__title`, `.site-footer__text`, `.floating-nav__list`, `.floating-nav__indicator`, `.floating-nav__link`, `.floating-nav__icon`, `.floating-nav__label`.
+  - Modificadores (`--`): `.bg-aurora__blob--1..4`, `.btn-cta--primary`, `.btn-cta--outline`, `.btn-cta--invert-hover`, `.btn-cta--sm`, `.glass-card--lg`, `.glass-card--md`, `.project-card__icon--1`, `.project-card__icon--2`.
 - **Hooks y estados de JavaScript:**
   - Atributos `data-*` en HTML para comportamiento (`data-reveal`, `data-floating-nav`, `data-nav-link`) sin acoplar JS a clases de presentación.
   - Clases de estado con prefijo `is-*` / `has-*` (`.reveal.is-visible`, `.floating-nav__link.is-active`, `.floating-nav__indicator.is-ready`, `.floating-nav.has-indicator`).
@@ -131,7 +137,7 @@ Tema oscuro (*dark mode*) con superficies tipo *glassmorphism* y acentos índigo
 
 ### 4.6 Responsive, accesibilidad y mejora progresiva
 - **Mobile-first** usando el sistema de breakpoints de Bootstrap 5 (`sm` = `576px` para mostrar etiquetas inactivas en `.floating-nav`, `md` = `768px`, `lg` = `992px`, etc.).
-- **Reducción de movimiento:** respetada en CSS (`scroll-behavior: auto`, sin transiciones en `.floating-nav__link`) y en JS (`prefers-reduced-motion: reduce` desactiva `.reveal` y usa scroll instantáneo).
+- **Reducción de movimiento:** respetada en CSS (`scroll-behavior: auto`, sin animaciones en `.bg-aurora__blob` y sin transiciones en `.floating-nav__link`/`.floating-nav__indicator`) y en JS (`prefers-reduced-motion: reduce` desactiva `.reveal` y usa scroll instantáneo).
 - **Mejora progresiva:** la clase `.reveal` solo la añade `js/main.js`, y `.floating-nav` funciona como enlaces ancla HTML estándar incluso si JavaScript está desactivado.
 
 ---
@@ -150,8 +156,8 @@ Tema oscuro (*dark mode*) con superficies tipo *glassmorphism* y acentos índigo
 3. **Mantener el diseño imprimible (`@media print`).**
    - Conservar y actualizar los bloques `@media print` en `css/base.css`, `css/layout.css` y `css/components.css` ante cualquier sección nueva:
      - Forzar visibilidad de elementos animados (`.reveal { opacity: 1 !important; transform: none !important; }`).
-     - Ocultar elementos de navegación fijos (`.floating-nav { display: none !important; }`).
-     - Mantener fondo blanco, texto oscuro de alto contraste y tarjetas sin `backdrop-filter` ni `.hero__glow`.
+     - Ocultar elementos decorativos y navegación fijos (`.bg-aurora`, `.floating-nav { display: none !important; }`).
+     - Mantener fondo blanco, texto oscuro de alto contraste y tarjetas sin `backdrop-filter`.
      - Evitar cortes de página dentro de tarjetas (`break-inside: avoid`) y asegurar que la información de contacto y enlaces sean legibles en papel o PDF.
 
 4. **No cambiar el contenido personal sin que el propietario lo pida.**

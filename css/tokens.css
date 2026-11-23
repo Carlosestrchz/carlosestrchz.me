@@ -22,6 +22,22 @@
     --color-border-strong: rgba(255, 255, 255, 0.2);
     --color-overlay-hover: rgba(255, 255, 255, 0.1);
 
+    /* Fondo animado aurora */
+    --z-bg-aurora: -1;
+    --blur-aurora: 96px;
+    --aurora-opacity-1: 0.26;
+    --aurora-opacity-2: 0.22;
+    --aurora-opacity-3: 0.2;
+    --aurora-opacity-4: 0.18;
+    --aurora-duration-1: 37s;
+    --aurora-duration-2: 53s;
+    --aurora-duration-3: 71s;
+    --aurora-duration-4: 89s;
+    --aurora-delay-1: -11s;
+    --aurora-delay-2: -29s;
+    --aurora-delay-3: -43s;
+    --aurora-delay-4: -61s;
+
     /* Efectos y capas (navegación flotante) */
     --shadow-floating: 0 8px 32px rgba(0, 0, 0, 0.45);
     --blur-floating: 16px;
