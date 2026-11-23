@@ -29,15 +29,15 @@
     <!-- hero -->
     <header id="inicio" class="hero page-section position-relative overflow-hidden">
         <div class="hero__content position-relative text-center">
-            <p class="hero__eyebrow mb-0">Hola, ¡Has llegado a mi página personal!</p>
+            <p class="hero__eyebrow mb-0" data-i18n="hero.eyebrow">Hola, ¡Has llegado a mi página personal!</p>
             <h1 class="hero__title">Carlos <span class="gradient-text">Estrada</span></h1>
-            <p class="hero__role">Desarrollador Java Jr | Apps multiplataforma.</p>
-            <p class="hero__lead mx-auto">
+            <p class="hero__role" data-i18n="hero.role">Desarrollador Java Jr | Apps multiplataforma.</p>
+            <p class="hero__lead mx-auto" data-i18n="hero.lead">
                 Experiencia en soluciones IoT y desarrollo web, con experiencia práctica en backend e infraestructura en la nube. Aquí encontrarás mi formación, proyectos y habilidades.
             </p>
             <div class="d-flex flex-wrap justify-content-center gap-3">
-                <a href="#proyectos" class="btn rounded-pill btn-cta btn-cta--primary">Ver proyectos</a>
-                <a href="#contacto" class="btn rounded-pill btn-cta btn-cta--outline">Contactar</a>
+                <a href="#proyectos" class="btn rounded-pill btn-cta btn-cta--primary" data-i18n="hero.ctaProjects">Ver proyectos</a>
+                <a href="#contacto" class="btn rounded-pill btn-cta btn-cta--outline" data-i18n="hero.ctaContact">Contactar</a>
             </div>
         </div>
     </header>
@@ -51,11 +51,11 @@
                     <div class="col-12 col-md-6">
                         <div class="card glass-card glass-card--lg">
                             <div class="card-body">
-                                <h2 id="sobre-mi-titulo" class="about__title">Sobre mí</h2>
-                                <p class="about__text mb-0">
+                                <h2 id="sobre-mi-titulo" class="about__title" data-i18n="about.title">Sobre mí</h2>
+                                <p class="about__text mb-0" data-i18n="about.p1">
                                     Estudiante de Ingeniería en Sistemas Computacionales a nada de titularse, y desarrollador Java full stack en formación. Estudié también Ingeniería en Electrónica, y por eso me atraen los proyectos donde el código se encuentra con el mundo físico: IoT y sistemas embebidos.
                                 </p>
-                                <p class="about__text mt-3 mb-0">
+                                <p class="about__text mt-3 mb-0" data-i18n="about.p2">
                                     Me inspira entender cómo funcionan las cosas, desde las bases, hasta ser capaz de construir proyectos que apliquen dichos principios: la electrónica y el prototipado, la privacidad digital, la infraestructura propia y el software abierto. Me motiva pensar que lo que construyo llegue a representar una solución para los problemas de mi entorno.
                                 </p>
                             </div>
@@ -64,9 +64,9 @@
                     <div class="col-12 col-md-6">
                         <div class="card glass-card glass-card--md">
                             <div class="card-body">
-                                <h3 class="card-title glass-card__title">En resumen:</h3>
-                                <p class="card-text glass-card__text">Monterrey, Nuevo León · Disponibilidad de reubicación</p>
-                                <p class="card-text glass-card__text">Inglés (B2)</p>
+                                <h3 class="card-title glass-card__title" data-i18n="about.summaryTitle">En resumen:</h3>
+                                <p class="card-text glass-card__text" data-i18n="about.location">Monterrey, Nuevo León · Disponibilidad de reubicación</p>
+                                <p class="card-text glass-card__text" data-i18n="about.english">Inglés (B2)</p>
                                 <ul class="list-unstyled d-flex flex-wrap gap-2 mb-0">
                                     <li class="badge tech-badge">Java</li>
                                     <li class="badge tech-badge">Spring Boot</li>
@@ -78,7 +78,7 @@
                                     <li class="badge tech-badge">Oracle Cloud</li>
                                 </ul>
                                 <div class="d-flex flex-wrap gap-3 mt-4">
-                                    <a href="https://www.linkedin.com/in/carlos-i-estrada/" target="_blank" rel="noopener noreferrer" class="btn rounded-pill btn-cta btn-cta--primary btn-cta--sm">Ver en LinkedIn</a>
+                                    <a href="https://www.linkedin.com/in/carlos-i-estrada/" target="_blank" rel="noopener noreferrer" class="btn rounded-pill btn-cta btn-cta--primary btn-cta--sm" data-i18n="about.linkedin">Ver en LinkedIn</a>
                                 </div>
                             </div>
                         </div>
@@ -91,7 +91,7 @@
         <section id="proyectos" class="page-section" aria-labelledby="proyectos-titulo">
             <div class="page-section__inner" data-reveal>
                 <div class="container page-container">
-                    <h2 id="proyectos-titulo" class="section-title">Proyectos académicos y profesionales</h2>
+                    <h2 id="proyectos-titulo" class="section-title" data-i18n="projects.title">Proyectos académicos y profesionales</h2>
                 </div>
                 <div class="projects-carousel" data-projects-carousel>
                     <div class="projects-carousel__track">
@@ -103,8 +103,8 @@
                                             <img src="img/WattGuard.png" alt="Logo de WattGuard" class="project-card__logo">
                                         </div>
                                         <h3 class="card-title project-card__title">WattGuard</h3>
-                                        <p class="project-card__meta">Hackathon Talent Land 2026 · Qualcomm Sustainable Power Cities</p>
-                                        <p class="card-text project-card__text flex-grow-1">Plataforma IoT con modelo de IA en el borde que monitorea el consumo eléctrico y lo ajusta de forma automática: apaga dispositivos en desuso o no prioritarios y puede desactivar nodos ante sobrecargas o exceso de temperatura. La app móvil está desarrollada con Dart y Flutter.</p>
+                                        <p class="project-card__meta" data-i18n="projects.wattguard.meta">Hackathon Talent Land 2026 · Qualcomm Sustainable Power Cities</p>
+                                        <p class="card-text project-card__text flex-grow-1" data-i18n="projects.wattguard.text">Plataforma IoT con modelo de IA en el borde que monitorea el consumo eléctrico y lo ajusta de forma automática: apaga dispositivos en desuso o no prioritarios y puede desactivar nodos ante sobrecargas o exceso de temperatura. La app móvil está desarrollada con Dart y Flutter.</p>
                                         <ul class="list-unstyled d-flex flex-wrap gap-2 mb-3">
                                             <li class="badge tech-badge">IoT</li>
                                             <li class="badge tech-badge">Edge AI</li>
@@ -113,7 +113,7 @@
                                             <li class="badge tech-badge">C</li>
                                             <li class="badge tech-badge">PlatformIO</li>
                                         </ul>
-                                        <a href="https://github.com/Carlosestrchz/wattguard" target="_blank" rel="noopener noreferrer" class="link-accent align-self-start">Más información →</a>
+                                        <a href="https://github.com/Carlosestrchz/wattguard" target="_blank" rel="noopener noreferrer" class="link-accent align-self-start" data-i18n="projects.moreInfo">Más información →</a>
                                     </div>
                                 </article>
                             </div>
@@ -124,15 +124,15 @@
                                             <img src="img/signet-logo-white-trim.jpeg" alt="Logo de signet" class="project-card__logo">
                                         </div>
                                         <h3 class="card-title project-card__title">Signet</h3>
-                                        <p class="project-card__meta">Hackathon Solana Builder 2026</p>
-                                        <p class="card-text project-card__text flex-grow-1">Protocolo distribuido que funciona sobre la blockchain de Solana para registrar y validar la propiedad de archivos digitales mediante su huella criptográfica SHA-256.</p>
+                                        <p class="project-card__meta" data-i18n="projects.signet.meta">Hackathon Solana Builder 2026</p>
+                                        <p class="card-text project-card__text flex-grow-1" data-i18n="projects.signet.text">Protocolo distribuido que funciona sobre la blockchain de Solana para registrar y validar la propiedad de archivos digitales mediante su huella criptográfica SHA-256.</p>
                                         <ul class="list-unstyled d-flex flex-wrap gap-2 mb-3">
                                             <li class="badge tech-badge">blockchain</li>
-                                            <li class="badge tech-badge">Criptografía</li>
+                                            <li class="badge tech-badge" data-i18n="projects.signet.tagCrypto">Criptografía</li>
                                             <li class="badge tech-badge">Rust</li>
                                             <li class="badge tech-badge">Solana</li>
                                         </ul>
-                                        <a href="https://github.com/Carlosestrchz/signet" target="_blank" rel="noopener noreferrer" class="link-accent align-self-start">Más información →</a>
+                                        <a href="https://github.com/Carlosestrchz/signet" target="_blank" rel="noopener noreferrer" class="link-accent align-self-start" data-i18n="projects.moreInfo">Más información →</a>
                                     </div>
                                 </article>
                             </div>
@@ -143,8 +143,8 @@
                                             <img src="img/apex-iron.jpg" alt="Logo de Apex Iron" class="project-card__logo">
                                         </div>
                                         <h3 class="card-title project-card__title">Apex Iron</h3>
-                                        <p class="project-card__meta">Bootcamp Generation México</p>
-                                        <p class="card-text project-card__text flex-grow-1">Plataforma e-commerce de productos electrónicos de consumo, componentes de cómputo (RAM, SSD, chasis y periféricos), computadoras portátiles y PCs armadas a medida.</p>
+                                        <p class="project-card__meta" data-i18n="projects.apex.meta">Bootcamp Generation México</p>
+                                        <p class="card-text project-card__text flex-grow-1" data-i18n="projects.apex.text">Plataforma e-commerce de productos electrónicos de consumo, componentes de cómputo (RAM, SSD, chasis y periféricos), computadoras portátiles y PCs armadas a medida.</p>
                                         <ul class="list-unstyled d-flex flex-wrap gap-2 mb-3">
                                             <li class="badge tech-badge">HTML</li>
                                             <li class="badge tech-badge">CSS</li>
@@ -153,7 +153,7 @@
                                             <li class="badge tech-badge">SQL</li>
                                             <li class="badge tech-badge">Spring Boot</li>
                                         </ul>
-                                        <a href="https://apex-iron.carlosestrchz.me/" target="_blank" rel="noopener noreferrer" class="link-accent align-self-start">Más información →</a>
+                                        <a href="https://apex-iron.carlosestrchz.me/" target="_blank" rel="noopener noreferrer" class="link-accent align-self-start" data-i18n="projects.moreInfo">Más información →</a>
                                     </div>
                                 </article>
                             </div>
@@ -164,8 +164,8 @@
                                             <img src="img/aironcito.jpeg" alt="Logo de Ironcito" class="project-card__logo">
                                         </div>
                                         <h3 class="card-title project-card__title">Ironcito</h3>
-                                        <p class="project-card__meta">Bootcamp Business AI Builder · Oracle Next Education</p>
-                                        <p class="card-text project-card__text flex-grow-1">Agente de IA integrado dentro de Apex Iron y potenciado con flujos de automatización en N8N que guía a usuarios sin conocimientos técnicos en la compra de componentes y periféricos: valida la compatibilidad con sus equipos de cómputo y sugiere alternativas compatibles dentro del catálogo disponible.</p>
+                                        <p class="project-card__meta" data-i18n="projects.ironcito.meta">Bootcamp Business AI Builder · Oracle Next Education</p>
+                                        <p class="card-text project-card__text flex-grow-1" data-i18n="projects.ironcito.text">Agente de IA integrado dentro de Apex Iron y potenciado con flujos de automatización en N8N que guía a usuarios sin conocimientos técnicos en la compra de componentes y periféricos: valida la compatibilidad con sus equipos de cómputo y sugiere alternativas compatibles dentro del catálogo disponible.</p>
                                         <ul class="list-unstyled d-flex flex-wrap gap-2 mb-3">
                                             <li class="badge tech-badge">N8N</li>
                                             <li class="badge tech-badge">API</li>
@@ -186,8 +186,8 @@
                                             <img src="img/WattGuard.png" alt="" class="project-card__logo">
                                         </div>
                                         <h3 class="card-title project-card__title">WattGuard</h3>
-                                        <p class="project-card__meta">Hackathon Talent Land 2026 · Qualcomm Sustainable Power Cities</p>
-                                        <p class="card-text project-card__text flex-grow-1">Plataforma IoT con modelo de IA en el borde que monitorea el consumo eléctrico y lo ajusta de forma automática: apaga dispositivos en desuso o no prioritarios y puede desactivar nodos ante sobrecargas o exceso de temperatura. La app móvil está desarrollada con Dart y Flutter.</p>
+                                        <p class="project-card__meta" data-i18n="projects.wattguard.meta">Hackathon Talent Land 2026 · Qualcomm Sustainable Power Cities</p>
+                                        <p class="card-text project-card__text flex-grow-1" data-i18n="projects.wattguard.text">Plataforma IoT con modelo de IA en el borde que monitorea el consumo eléctrico y lo ajusta de forma automática: apaga dispositivos en desuso o no prioritarios y puede desactivar nodos ante sobrecargas o exceso de temperatura. La app móvil está desarrollada con Dart y Flutter.</p>
                                         <ul class="list-unstyled d-flex flex-wrap gap-2 mb-3">
                                             <li class="badge tech-badge">IoT</li>
                                             <li class="badge tech-badge">Edge AI</li>
@@ -196,7 +196,7 @@
                                             <li class="badge tech-badge">C</li>
                                             <li class="badge tech-badge">PlatformIO</li>
                                         </ul>
-                                        <a href="https://github.com/Carlosestrchz/wattguard" target="_blank" rel="noopener noreferrer" tabindex="-1" class="link-accent align-self-start">Más información →</a>
+                                        <a href="https://github.com/Carlosestrchz/wattguard" target="_blank" rel="noopener noreferrer" tabindex="-1" class="link-accent align-self-start" data-i18n="projects.moreInfo">Más información →</a>
                                     </div>
                                 </article>
                             </div>
@@ -207,15 +207,15 @@
                                             <img src="img/signet-logo-white-trim.jpeg" alt="" class="project-card__logo">
                                         </div>
                                         <h3 class="card-title project-card__title">Signet</h3>
-                                        <p class="project-card__meta">Hackathon Solana Builder 2026</p>
-                                        <p class="card-text project-card__text flex-grow-1">Protocolo distribuido que funciona sobre la blockchain de Solana para registrar y validar la propiedad de archivos digitales mediante su huella criptográfica SHA-256.</p>
+                                        <p class="project-card__meta" data-i18n="projects.signet.meta">Hackathon Solana Builder 2026</p>
+                                        <p class="card-text project-card__text flex-grow-1" data-i18n="projects.signet.text">Protocolo distribuido que funciona sobre la blockchain de Solana para registrar y validar la propiedad de archivos digitales mediante su huella criptográfica SHA-256.</p>
                                         <ul class="list-unstyled d-flex flex-wrap gap-2 mb-3">
                                             <li class="badge tech-badge">blockchain</li>
-                                            <li class="badge tech-badge">Criptografía</li>
+                                            <li class="badge tech-badge" data-i18n="projects.signet.tagCrypto">Criptografía</li>
                                             <li class="badge tech-badge">Rust</li>
                                             <li class="badge tech-badge">Solana</li>
                                         </ul>
-                                        <a href="https://github.com/Carlosestrchz/signet" target="_blank" rel="noopener noreferrer" tabindex="-1" class="link-accent align-self-start">Más información →</a>
+                                        <a href="https://github.com/Carlosestrchz/signet" target="_blank" rel="noopener noreferrer" tabindex="-1" class="link-accent align-self-start" data-i18n="projects.moreInfo">Más información →</a>
                                     </div>
                                 </article>
                             </div>
@@ -226,8 +226,8 @@
                                             <img src="img/apex-iron.jpg" alt="" class="project-card__logo">
                                         </div>
                                         <h3 class="card-title project-card__title">Apex Iron</h3>
-                                        <p class="project-card__meta">Bootcamp Generation México</p>
-                                        <p class="card-text project-card__text flex-grow-1">Plataforma e-commerce de productos electrónicos de consumo, componentes de cómputo (RAM, SSD, chasis y periféricos), computadoras portátiles y PCs armadas a medida.</p>
+                                        <p class="project-card__meta" data-i18n="projects.apex.meta">Bootcamp Generation México</p>
+                                        <p class="card-text project-card__text flex-grow-1" data-i18n="projects.apex.text">Plataforma e-commerce de productos electrónicos de consumo, componentes de cómputo (RAM, SSD, chasis y periféricos), computadoras portátiles y PCs armadas a medida.</p>
                                         <ul class="list-unstyled d-flex flex-wrap gap-2 mb-3">
                                             <li class="badge tech-badge">HTML</li>
                                             <li class="badge tech-badge">CSS</li>
@@ -236,7 +236,7 @@
                                             <li class="badge tech-badge">SQL</li>
                                             <li class="badge tech-badge">Spring Boot</li>
                                         </ul>
-                                        <a href="https://apex-iron.carlosestrchz.me/" target="_blank" rel="noopener noreferrer" tabindex="-1" class="link-accent align-self-start">Más información →</a>
+                                        <a href="https://apex-iron.carlosestrchz.me/" target="_blank" rel="noopener noreferrer" tabindex="-1" class="link-accent align-self-start" data-i18n="projects.moreInfo">Más información →</a>
                                     </div>
                                 </article>
                             </div>
@@ -247,8 +247,8 @@
                                             <img src="img/aironcito.jpeg" alt="" class="project-card__logo">
                                         </div>
                                         <h3 class="card-title project-card__title">Ironcito</h3>
-                                        <p class="project-card__meta">Bootcamp Business AI Builder · Oracle Next Education</p>
-                                        <p class="card-text project-card__text flex-grow-1">Agente de IA integrado dentro de Apex Iron y potenciado con flujos de automatización en N8N que guía a usuarios sin conocimientos técnicos en la compra de componentes y periféricos: valida la compatibilidad con sus equipos de cómputo y sugiere alternativas compatibles dentro del catálogo disponible.</p>
+                                        <p class="project-card__meta" data-i18n="projects.ironcito.meta">Bootcamp Business AI Builder · Oracle Next Education</p>
+                                        <p class="card-text project-card__text flex-grow-1" data-i18n="projects.ironcito.text">Agente de IA integrado dentro de Apex Iron y potenciado con flujos de automatización en N8N que guía a usuarios sin conocimientos técnicos en la compra de componentes y periféricos: valida la compatibilidad con sus equipos de cómputo y sugiere alternativas compatibles dentro del catálogo disponible.</p>
                                         <ul class="list-unstyled d-flex flex-wrap gap-2 mb-3">
                                             <li class="badge tech-badge">N8N</li>
                                             <li class="badge tech-badge">API</li>
@@ -269,32 +269,32 @@
         <!-- infraestructura -->
         <section id="infraestructura" class="page-section" aria-labelledby="infraestructura-titulo">
             <div class="container page-container page-section__inner" data-reveal>
-                <h2 id="infraestructura-titulo" class="section-title">Infraestructura</h2>
+                <h2 id="infraestructura-titulo" class="section-title" data-i18n="infra.title">Infraestructura</h2>
                 <div class="card glass-card glass-card--md infra-intro">
                     <div class="card-body">
-                        <p class="card-text infra-intro__text mb-0">
-                            Apasionado por contenedorizar aplicaciones con Podman y administrar mi propia infraestructura de servicios autoalojados. Diseñar, desplegar y mantener este entorno me permite trabajar de primera mano con redes, proxies inversos, automatización y gestión de datos, aplicando buenas prácticas de aislamiento, reproducibilidad y control total sobre el stack. Aquí concentro los servicios desplegados bajo mi dominio; algunos se encuentran en proceso de puesta en marcha y estarán disponibles muy pronto.
+                        <p class="card-text infra-intro__text mb-0" data-i18n="infra.intro">
+                            Apasionado por contenedorizar aplicaciones con Podman y administrar mi propia infraestructura de servicios autoalojados. Diseñar, desplegar y mantener este entorno me permite trabajar de primera mano con redes, proxies inversos, automatización y gestión de datos, aplicando buenas prácticas de aislamiento, reproducibilidad y control total sobre el stack. Aquí concentro los servicios desplegados bajo mi dominio.
                         </p>
                     </div>
                 </div>
                 <div class="row row-cols-1 row-cols-md-2 g-4 infra-grid">
                     <div class="col">
-                        <a href="https://n8n.carlosestrchz.me" target="_blank" rel="noopener noreferrer" class="infra-banner" aria-label="Abrir n8n en n8n.carlosestrchz.me">
+                        <a href="https://n8n.carlosestrchz.me" target="_blank" rel="noopener noreferrer" class="infra-banner" aria-label="Abrir n8n en n8n.carlosestrchz.me" data-i18n-aria="infra.n8nLabel">
                             <img src="img/n8n.jpeg" alt="Banner del servicio n8n" class="infra-banner__img">
                         </a>
                     </div>
                     <div class="col">
-                        <a href="https://git.carlosestrchz.me" target="_blank" rel="noopener noreferrer" class="infra-banner" aria-label="Abrir Gitea en git.carlosestrchz.me">
+                        <a href="https://git.carlosestrchz.me" target="_blank" rel="noopener noreferrer" class="infra-banner" aria-label="Abrir Gitea en git.carlosestrchz.me" data-i18n-aria="infra.giteaLabel">
                             <img src="img/gitea.jpeg" alt="Banner del servicio Gitea" class="infra-banner__img">
                         </a>
                     </div>
                     <div class="col">
-                        <a href="https://dbmanager.carlosestrchz.me" target="_blank" rel="noopener noreferrer" class="infra-banner" aria-label="Abrir DbGate en dbmanager.carlosestrchz.me">
+                        <a href="https://dbmanager.carlosestrchz.me" target="_blank" rel="noopener noreferrer" class="infra-banner" aria-label="Abrir DbGate en dbmanager.carlosestrchz.me" data-i18n-aria="infra.dbgateLabel">
                             <img src="img/dbgate.jpeg" alt="Banner del servicio DbGate" class="infra-banner__img">
                         </a>
                     </div>
                     <div class="col">
-                        <a href="https://drive.carlosestrchz.me" target="_blank" rel="noopener noreferrer" class="infra-banner" aria-label="Abrir Seafile en drive.carlosestrchz.me">
+                        <a href="https://drive.carlosestrchz.me" target="_blank" rel="noopener noreferrer" class="infra-banner" aria-label="Abrir Seafile en drive.carlosestrchz.me" data-i18n-aria="infra.seafileLabel">
                             <img src="img/seafile.jpeg" alt="Banner del servicio Seafile" class="infra-banner__img">
                         </a>
                     </div>
@@ -310,8 +310,8 @@
             <div class="card glass-card glass-card--lg">
                 <div class="card-body d-flex flex-column flex-md-row justify-content-md-between align-items-center gap-4 text-center text-md-start">
                     <div>
-                        <h3 class="card-title site-footer__title">Hablemos</h3>
-                        <p class="card-text site-footer__text mb-0">¿Tienes una vacante o un proyecto en mente? Escríbeme.</p>
+                        <h3 class="card-title site-footer__title" data-i18n="contact.title">Hablemos</h3>
+                        <p class="card-text site-footer__text mb-0" data-i18n="contact.text">¿Tienes una vacante o un proyecto en mente? Escríbeme.</p>
                     </div>
                     <div class="d-flex flex-wrap justify-content-center gap-3">
                         <a href="mailto:carlosestrchz@gmail.com" target="_blank" rel="noopener noreferrer" class="btn rounded-pill btn-cta btn-cta--outline btn-cta--invert-hover btn-cta--sm">carlosestrchz@gmai.com</a>
@@ -321,53 +321,59 @@
         </div>
     </footer>
 
+    <!-- selector de idioma -->
+    <div class="lang-switch" role="group" aria-label="Selector de idioma" data-lang-switch data-i18n-aria="lang.ariaLabel">
+        <button type="button" class="lang-switch__btn is-active" data-lang="es" aria-pressed="true">ES</button>
+        <button type="button" class="lang-switch__btn" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+
     <!-- navegacion flotante -->
-    <nav class="floating-nav" aria-label="Navegación principal" data-floating-nav>
+    <nav class="floating-nav" aria-label="Navegación principal" data-floating-nav data-i18n-aria="nav.ariaLabel">
         <ul class="floating-nav__list">
             <li>
-                <a href="#inicio" class="floating-nav__link" aria-label="Inicio" data-nav-link>
+                <a href="#inicio" class="floating-nav__link" aria-label="Inicio" data-nav-link data-i18n-aria="nav.home">
                     <svg class="floating-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M3 10.5L12 3l9 7.5"></path>
                         <path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"></path>
                     </svg>
-                    <span class="floating-nav__label">Inicio</span>
+                    <span class="floating-nav__label" data-i18n="nav.home">Inicio</span>
                 </a>
             </li>
             <li>
-                <a href="#sobre-mi" class="floating-nav__link" aria-label="Sobre mí" data-nav-link>
+                <a href="#sobre-mi" class="floating-nav__link" aria-label="Sobre mí" data-nav-link data-i18n-aria="nav.about">
                     <svg class="floating-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <circle cx="12" cy="8" r="4"></circle>
                         <path d="M4 20a8 8 0 0 1 16 0"></path>
                     </svg>
-                    <span class="floating-nav__label">Sobre mí</span>
+                    <span class="floating-nav__label" data-i18n="nav.about">Sobre mí</span>
                 </a>
             </li>
             <li>
-                <a href="#proyectos" class="floating-nav__link" aria-label="Proyectos" data-nav-link>
+                <a href="#proyectos" class="floating-nav__link" aria-label="Proyectos" data-nav-link data-i18n-aria="nav.projects">
                     <svg class="floating-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"></path>
                     </svg>
-                    <span class="floating-nav__label">Proyectos</span>
+                    <span class="floating-nav__label" data-i18n="nav.projects">Proyectos</span>
                 </a>
             </li>
             <li>
-                <a href="#infraestructura" class="floating-nav__link" aria-label="Infraestructura" data-nav-link>
+                <a href="#infraestructura" class="floating-nav__link" aria-label="Infraestructura" data-nav-link data-i18n-aria="nav.infra">
                     <svg class="floating-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <rect x="2" y="3" width="20" height="7" rx="2"></rect>
                         <rect x="2" y="14" width="20" height="7" rx="2"></rect>
                         <line x1="6" y1="6.5" x2="6.01" y2="6.5"></line>
                         <line x1="6" y1="17.5" x2="6.01" y2="17.5"></line>
                     </svg>
-                    <span class="floating-nav__label">Infraestructura</span>
+                    <span class="floating-nav__label" data-i18n="nav.infra">Infraestructura</span>
                 </a>
             </li>
             <li>
-                <a href="#contacto" class="floating-nav__link" aria-label="Contacto" data-nav-link>
+                <a href="#contacto" class="floating-nav__link" aria-label="Contacto" data-nav-link data-i18n-aria="nav.contact">
                     <svg class="floating-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <rect x="2" y="4" width="20" height="16" rx="2"></rect>
                         <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
                     </svg>
-                    <span class="floating-nav__label">Contacto</span>
+                    <span class="floating-nav__label" data-i18n="nav.contact">Contacto</span>
                 </a>
             </li>
         </ul>

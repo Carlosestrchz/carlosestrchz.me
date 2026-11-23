@@ -3,6 +3,163 @@
 
     const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     const supportsObserver = 'IntersectionObserver' in window;
+    const onLanguageChangedCallbacks = [];
+
+    /* ---------- selector de idioma (es / en) ---------- */
+    const translations = {
+        es: {
+            'meta.title': 'Blog de Carlos Estrada | Developer',
+            'meta.description': 'Página personal de Carlos Estrada, desarrollador Java Full Stack Jr. con enfoque en IoT, backend y nube.',
+            'hero.eyebrow': 'Hola, ¡Has llegado a mi página personal!',
+            'hero.role': 'Desarrollador Java Jr | Apps multiplataforma.',
+            'hero.lead': 'Experiencia en soluciones IoT y desarrollo web, con experiencia práctica en backend e infraestructura en la nube. Aquí encontrarás mi formación, proyectos y habilidades.',
+            'hero.ctaProjects': 'Ver proyectos',
+            'hero.ctaContact': 'Contactar',
+            'about.title': 'Sobre mí',
+            'about.p1': 'Estudiante de Ingeniería en Sistemas Computacionales a nada de titularse, y desarrollador Java full stack en formación. Estudié también Ingeniería en Electrónica, y por eso me atraen los proyectos donde el código se encuentra con el mundo físico: IoT y sistemas embebidos.',
+            'about.p2': 'Me inspira entender cómo funcionan las cosas, desde las bases, hasta ser capaz de construir proyectos que apliquen dichos principios: la electrónica y el prototipado, la privacidad digital, la infraestructura propia y el software abierto. Me motiva pensar que lo que construyo llegue a representar una solución para los problemas de mi entorno.',
+            'about.summaryTitle': 'En resumen:',
+            'about.location': 'Monterrey, Nuevo León · Disponibilidad de reubicación',
+            'about.english': 'Inglés (B2)',
+            'about.linkedin': 'Ver en LinkedIn',
+            'projects.title': 'Proyectos académicos y profesionales',
+            'projects.moreInfo': 'Más información →',
+            'projects.wattguard.meta': 'Hackathon Talent Land 2026 · Qualcomm Sustainable Power Cities',
+            'projects.wattguard.text': 'Plataforma IoT con modelo de IA en el borde que monitorea el consumo eléctrico y lo ajusta de forma automática: apaga dispositivos en desuso o no prioritarios y puede desactivar nodos ante sobrecargas o exceso de temperatura. La app móvil está desarrollada con Dart y Flutter.',
+            'projects.signet.meta': 'Hackathon Solana Builder 2026',
+            'projects.signet.text': 'Protocolo distribuido que funciona sobre la blockchain de Solana para registrar y validar la propiedad de archivos digitales mediante su huella criptográfica SHA-256.',
+            'projects.signet.tagCrypto': 'Criptografía',
+            'projects.apex.meta': 'Bootcamp Generation México',
+            'projects.apex.text': 'Plataforma e-commerce de productos electrónicos de consumo, componentes de cómputo (RAM, SSD, chasis y periféricos), computadoras portátiles y PCs armadas a medida.',
+            'projects.ironcito.meta': 'Bootcamp Business AI Builder · Oracle Next Education',
+            'projects.ironcito.text': 'Agente de IA integrado dentro de Apex Iron y potenciado con flujos de automatización en N8N que guía a usuarios sin conocimientos técnicos en la compra de componentes y periféricos: valida la compatibilidad con sus equipos de cómputo y sugiere alternativas compatibles dentro del catálogo disponible.',
+            'infra.title': 'Infraestructura',
+            'infra.intro': 'Apasionado por contenedorizar aplicaciones con Podman y administrar mi propia infraestructura de servicios autoalojados. Diseñar, desplegar y mantener este entorno me permite trabajar de primera mano con redes, proxies inversos, automatización y gestión de datos, aplicando buenas prácticas de aislamiento, reproducibilidad y control total sobre el stack. Aquí concentro los servicios desplegados bajo mi dominio.',
+            'infra.n8nLabel': 'Abrir n8n en n8n.carlosestrchz.me',
+            'infra.giteaLabel': 'Abrir Gitea en git.carlosestrchz.me',
+            'infra.dbgateLabel': 'Abrir DbGate en dbmanager.carlosestrchz.me',
+            'infra.seafileLabel': 'Abrir Seafile en drive.carlosestrchz.me',
+            'contact.title': 'Hablemos',
+            'contact.text': '¿Tienes una vacante o un proyecto en mente? Escríbeme.',
+            'lang.ariaLabel': 'Selector de idioma',
+            'nav.ariaLabel': 'Navegación principal',
+            'nav.home': 'Inicio',
+            'nav.about': 'Sobre mí',
+            'nav.projects': 'Proyectos',
+            'nav.infra': 'Infraestructura',
+            'nav.contact': 'Contacto',
+        },
+        en: {
+            'meta.title': "Carlos Estrada's Blog | Developer",
+            'meta.description': 'Personal website of Carlos Estrada, Jr. Java Full Stack Developer focused on IoT, backend, and cloud.',
+            'hero.eyebrow': 'Hi, welcome to my personal website!',
+            'hero.role': 'Jr. Java Developer | Cross-platform Apps.',
+            'hero.lead': 'Experience in IoT solutions and web development, with hands-on experience in backend and cloud infrastructure. Here you will find my background, projects, and skills.',
+            'hero.ctaProjects': 'View projects',
+            'hero.ctaContact': 'Contact',
+            'about.title': 'About me',
+            'about.p1': 'Computer Systems Engineering student about to graduate and aspiring Java Full Stack Developer. I also studied Electronics Engineering, which draws me to projects where code meets the physical world: IoT and embedded systems.',
+            'about.p2': 'I am inspired by understanding how things work from the ground up until I can build projects applying those principles: electronics and prototyping, digital privacy, self-hosted infrastructure, and open-source software. What drives me is knowing that what I build can become a real solution to the problems around me.',
+            'about.summaryTitle': 'In summary:',
+            'about.location': 'Monterrey, Nuevo León · Open to relocation',
+            'about.english': 'English (B2)',
+            'about.linkedin': 'View on LinkedIn',
+            'projects.title': 'Academic & Professional Projects',
+            'projects.moreInfo': 'Learn more →',
+            'projects.wattguard.meta': 'Talent Land 2026 Hackathon · Qualcomm Sustainable Power Cities',
+            'projects.wattguard.text': 'IoT platform with an Edge AI model that monitors power consumption and automatically regulates it: turns off idle or non-priority devices and can shut down nodes during overloads or overheating. The mobile app is built with Dart and Flutter.',
+            'projects.signet.meta': 'Solana Builder 2026 Hackathon',
+            'projects.signet.text': 'Distributed protocol running on the Solana blockchain to register and verify digital file ownership through its SHA-256 cryptographic hash.',
+            'projects.signet.tagCrypto': 'Cryptography',
+            'projects.apex.meta': 'Generation México Bootcamp',
+            'projects.apex.text': 'E-commerce platform for consumer electronics, computer hardware components (RAM, SSDs, cases, and peripherals), laptops, and custom-built PCs.',
+            'projects.ironcito.meta': 'Business AI Builder Bootcamp · Oracle Next Education',
+            'projects.ironcito.text': 'AI agent integrated into Apex Iron and powered by n8n automation workflows that guides non-technical users in buying computer components and peripherals: checks hardware compatibility with their systems and suggests compatible alternatives from the available catalog.',
+            'infra.title': 'Infrastructure',
+            'infra.intro': 'Passionate about containerizing applications with Podman and managing my own self-hosted infrastructure. Designing, deploying, and maintaining this environment lets me work hands-on with networking, reverse proxies, automation, and data management, applying best practices for isolation, reproducibility, and full control over the stack. Here I gather the services deployed under my domain.',
+            'infra.n8nLabel': 'Open n8n at n8n.carlosestrchz.me',
+            'infra.giteaLabel': 'Open Gitea at git.carlosestrchz.me',
+            'infra.dbgateLabel': 'Open DbGate at dbmanager.carlosestrchz.me',
+            'infra.seafileLabel': 'Open Seafile at drive.carlosestrchz.me',
+            'contact.title': "Let's talk",
+            'contact.text': 'Have a job opening or a project in mind? Write to me.',
+            'lang.ariaLabel': 'Language selector',
+            'nav.ariaLabel': 'Main navigation',
+            'nav.home': 'Home',
+            'nav.about': 'About me',
+            'nav.projects': 'Projects',
+            'nav.infra': 'Infrastructure',
+            'nav.contact': 'Contact',
+        },
+    };
+
+    const langStorageKey = 'site-lang';
+    const langSwitch = document.querySelector('[data-lang-switch]');
+    const langButtons = langSwitch ? Array.from(langSwitch.querySelectorAll('[data-lang]')) : [];
+    const metaDescription = document.querySelector('meta[name="description"]');
+
+    const getStoredLanguage = () => {
+        try {
+            const saved = window.localStorage.getItem(langStorageKey);
+            return saved && translations[saved] ? saved : 'es';
+        } catch {
+            return 'es';
+        }
+    };
+
+    const saveLanguage = (lang) => {
+        try {
+            window.localStorage.setItem(langStorageKey, lang);
+        } catch {
+            // ignorar si el almacenamiento local no esta disponible
+        }
+    };
+
+    const applyLanguage = (lang) => {
+        const dict = translations[lang] || translations.es;
+        document.documentElement.lang = lang;
+
+        if (dict['meta.title']) {
+            document.title = dict['meta.title'];
+        }
+        if (metaDescription && dict['meta.description']) {
+            metaDescription.setAttribute('content', dict['meta.description']);
+        }
+
+        document.querySelectorAll('[data-i18n]').forEach((el) => {
+            const key = el.getAttribute('data-i18n');
+            if (key && dict[key]) {
+                el.textContent = dict[key];
+            }
+        });
+
+        document.querySelectorAll('[data-i18n-aria]').forEach((el) => {
+            const key = el.getAttribute('data-i18n-aria');
+            if (key && dict[key]) {
+                el.setAttribute('aria-label', dict[key]);
+            }
+        });
+
+        langButtons.forEach((btn) => {
+            const isSelected = btn.getAttribute('data-lang') === lang;
+            btn.classList.toggle('is-active', isSelected);
+            btn.setAttribute('aria-pressed', String(isSelected));
+        });
+
+        onLanguageChangedCallbacks.forEach((cb) => cb());
+    };
+
+    langButtons.forEach((btn) => {
+        btn.addEventListener('click', (event) => {
+            if (event.detail > 0) {
+                btn.blur();
+            }
+            const nextLang = btn.getAttribute('data-lang');
+            if (!nextLang || !translations[nextLang]) return;
+            saveLanguage(nextLang);
+            applyLanguage(nextLang);
+        });
+    });
 
     /* ---------- animacion progresiva de aparicion ([data-reveal]) ---------- */
     if (!reducedMotionQuery.matches && supportsObserver) {
@@ -300,6 +457,7 @@
             );
 
             window.addEventListener('resize', updateLoopWidth, { passive: true });
+            onLanguageChangedCallbacks.push(updateLoopWidth);
             if (mobileCarouselQuery.matches) {
                 snapToCard(0, false);
             } else {
@@ -612,6 +770,17 @@
         },
         { passive: true }
     );
+
+    onLanguageChangedCallbacks.push(() => {
+        const active = sections.find(({ id }) => id === currentActiveId);
+        if (active) positionIndicator(active.link);
+    });
+
+    // aplicar idioma guardado antes de medir el indicador inicial
+    const initialLang = getStoredLanguage();
+    if (initialLang !== 'es') {
+        applyLanguage(initialLang);
+    }
 
     // posicion inicial del indicador antes de activar su transicion
     setActiveSection(findCenterSectionId());
