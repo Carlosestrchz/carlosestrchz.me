@@ -1,1 +1,7 @@
 node_modules/
+AGENTS.md
+build/
+src/
+*.env/
+.cache/
+.inf/
