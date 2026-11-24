@@ -491,12 +491,13 @@
 }
 
 .summary-photo {
-    width: 45%;
-    height: 12rem;
+    width: clamp(10.5rem, 45%, 13.5rem);
+    aspect-ratio: 1.08 / 1;
     margin-bottom: var(--space-4);
     border-radius: var(--radius-lg);
     border: 1px solid var(--color-border);
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .summary-photo__img {
@@ -506,14 +507,6 @@
     object-fit: cover;
     object-position: center;
     filter: contrast(0.8);
-}
-
-@media (min-width: 768px) {
-    .summary-photo {
-        flex: 1 1 0;
-        height: auto;
-        min-height: 0;
-    }
 }
 
 /* capa decorativa del avatar que empuja la tarjeta en resumen */
@@ -530,7 +523,7 @@
     top: 0;
     left: 0;
     height: var(--push-avatar-height);
-    width: auto;
+    aspect-ratio: 628 / 706;
     opacity: 0;
     transform: translate3d(var(--push-avatar-x, 0px), var(--push-avatar-y, 0px), 0);
     will-change: transform, opacity;
@@ -548,16 +541,17 @@
     display: none;
 }
 
-.about-push__img {
+.about-push__media {
     display: block;
+    width: 100%;
     height: 100%;
-    width: auto;
     max-width: none;
     object-fit: contain;
 }
 
 [data-about-push-card].is-push-ready {
-    transform: translate3d(var(--push-card-x, 0px), 0, 0);
+    transform-origin: 50% 100%;
+    transform: translate3d(var(--push-card-x, 0px), var(--push-card-y, 0px), 0) rotate(var(--push-card-rot, 0deg));
     will-change: transform;
 }
 

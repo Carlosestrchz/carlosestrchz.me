@@ -103,13 +103,15 @@
 
     /* animacion decorativa del avatar que empuja la tarjeta en resumen */
     --push-avatar-height: clamp(8.5rem, calc(19vw - 7.3rem), 16rem);
-    --push-duration: 5.33s;
-    --push-contact-overlap: 12px;
-    --push-hand-inset-ratio: 0.137;
-    --push-body-visible-ratio: 0.716;
+    --push-duration: 3.01s;
+    --push-contact-overlap: 8px;
+    --push-hand-inset-ratio: 0.011;
+    --push-body-visible-ratio: 0.828;
     --push-vertical-align: 0.96;
     --push-vertical-offset: 0px;
     --push-overshoot: 6px;
+    --push-wobble-deg: 3.2deg;
+    --push-wobble-lift: 4px;
     --push-edge-clearance: 10px;
     --push-min-breakpoint: 768;
 

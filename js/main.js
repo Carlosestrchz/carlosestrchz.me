@@ -948,10 +948,17 @@
 
     if (aboutPushSection && aboutPushCard && aboutPushStage && !reducedMotionQuery.matches && supportsObserver) {
         const pushAssetPath = 'img/webp/push.webp';
-        const pushAspectRatio = 730 / 716;
+        const pushNativeW = 628;
+        const pushNativeH = 706;
+        const pushTotalFrames = 64;
+        const pushLastFrame = pushTotalFrames - 1;
+        const pushAspectRatio = pushNativeW / pushNativeH;
 
         let pushAvatarEl = null;
-        let pushBlobPromise = null;
+        let pushBytesPromise = null;
+        let pushDecoder = null;
+        let pushCanvasCtx = null;
+        let pushUsingDecoder = false;
         let pushObjectUrl = null;
         let pushTriggered = false;
         let pushFinished = false;
@@ -960,6 +967,8 @@
         let pushRafId = null;
         let pushStartTime = 0;
         let pushPausedAt = 0;
+        let pushRequestedFrame = -1;
+        let pushDecodingFrame = false;
         let pushActiveMetrics = null;
         let pushObserver = null;
         let pushVisibilityObserver = null;
@@ -972,12 +981,46 @@
             return pushAvatarEl;
         };
 
-        const prefetchPushAsset = () => {
-            if (pushBlobPromise || typeof window.fetch !== 'function') return;
-            pushBlobPromise = window
+        // precargar solo los bytes del webp original sin iniciar ningun reloj de animacion
+        const prefetchPushBytes = () => {
+            if (pushBytesPromise || typeof window.fetch !== 'function') return pushBytesPromise;
+            pushBytesPromise = window
                 .fetch(pushAssetPath)
-                .then((res) => (res.ok ? res.blob() : null))
+                .then((res) => (res.ok ? res.arrayBuffer() : null))
                 .catch(() => null);
+            return pushBytesPromise;
+        };
+
+        // renderiza un cuadro exacto (0..63) del webp original en el canvas nativo 730x716
+        const renderDecoderFrame = (targetIndex) => {
+            if (!pushDecoder || !pushCanvasCtx) return;
+            const clamped = Math.max(0, Math.min(pushLastFrame, targetIndex));
+            if (clamped === pushRequestedFrame) return;
+            pushRequestedFrame = clamped;
+            if (pushDecodingFrame) return;
+
+            const flushDecode = async () => {
+                pushDecodingFrame = true;
+                let drawnIndex = -1;
+                try {
+                    while (pushDecoder && pushRequestedFrame !== drawnIndex) {
+                        const idx = pushRequestedFrame;
+                        const { image } = await pushDecoder.decode({ frameIndex: idx });
+                        if (pushCanvasCtx) {
+                            pushCanvasCtx.clearRect(0, 0, pushNativeW, pushNativeH);
+                            pushCanvasCtx.drawImage(image, 0, 0, pushNativeW, pushNativeH);
+                        }
+                        image.close();
+                        drawnIndex = idx;
+                    }
+                } catch {
+                    // ignorar si el decodificador ya fue cerrado al finalizar
+                } finally {
+                    pushDecodingFrame = false;
+                }
+            };
+
+            flushDecode();
         };
 
         const computePushMetrics = () => {
@@ -1004,14 +1047,16 @@
             const cardRight = cardBox.left + cardBox.width;
             const freeRightSpace = sectionWidth - cardRight;
 
-            const contactOverlap = readNumericToken(aboutPushSection, '--push-contact-overlap', 12);
-            const handInsetRatio = readNumericToken(aboutPushSection, '--push-hand-inset-ratio', 0.137);
-            const bodyVisibleRatio = readNumericToken(aboutPushSection, '--push-body-visible-ratio', 0.716);
+            const contactOverlap = readNumericToken(aboutPushSection, '--push-contact-overlap', 8);
+            const handInsetRatio = readNumericToken(aboutPushSection, '--push-hand-inset-ratio', 0.011);
+            const bodyVisibleRatio = readNumericToken(aboutPushSection, '--push-body-visible-ratio', 0.828);
             const verticalAlign = readNumericToken(aboutPushSection, '--push-vertical-align', 0.96);
             const verticalOffset = readNumericToken(aboutPushSection, '--push-vertical-offset', 0);
-            const overshoot = readNumericToken(aboutPushSection, '--push-overshoot', 8);
+            const overshoot = readNumericToken(aboutPushSection, '--push-overshoot', 6);
+            const wobbleDeg = readNumericToken(aboutPushSection, '--push-wobble-deg', 3.2);
+            const wobbleLift = readNumericToken(aboutPushSection, '--push-wobble-lift', 4);
             const edgeClearance = readNumericToken(aboutPushSection, '--push-edge-clearance', 10);
-            const durationMs = readDurationMsToken(aboutPushSection, '--push-duration', 5330);
+            const durationMs = readDurationMsToken(aboutPushSection, '--push-duration', 3008);
 
             const requiredVisibleWidth = avatarWidth * bodyVisibleRatio - contactOverlap;
             const hasRoom = freeRightSpace >= requiredVisibleWidth + edgeClearance;
@@ -1021,10 +1066,10 @@
             const avatarTop = Math.max(8, Math.min(sectionHeight - avatarHeight - 8, rawTop));
             const startOffsetX = Math.max(sectionWidth - cardBox.left + 32, avatarWidth + 48);
 
-            // distancia visible en pantalla desde que las manos del avatar entran por el borde derecho
+            // tramo visible garantizando que las manos entren en cuadro para el empuje
             const avatarVisibleFinalLeft = avatarFinalLeft + avatarWidth * handInsetRatio;
-            const rawOnScreenRunway = Math.max(0, sectionWidth - avatarVisibleFinalLeft + 18);
-            const onScreenRunway = Math.min(startOffsetX, rawOnScreenRunway, avatarWidth * 1.7);
+            const rawOnScreenRunway = Math.max(40, sectionWidth - avatarVisibleFinalLeft - 24);
+            const onScreenRunway = Math.min(startOffsetX, rawOnScreenRunway);
             const preEntryDist = Math.max(0, startOffsetX - onScreenRunway);
 
             return {
@@ -1035,6 +1080,8 @@
                 preEntryDist,
                 onScreenRunway,
                 overshoot,
+                wobbleDeg,
+                wobbleLift,
                 durationMs,
             };
         };
@@ -1048,9 +1095,11 @@
         const clearCardPushTransform = () => {
             aboutPushCard.classList.remove('is-push-ready');
             aboutPushCard.style.removeProperty('--push-card-x');
+            aboutPushCard.style.removeProperty('--push-card-y');
+            aboutPushCard.style.removeProperty('--push-card-rot');
         };
 
-        const finishPushAnimation = () => {
+        const finishPushAnimation = async () => {
             pushAnimating = false;
             pushFinished = true;
             if (pushRafId !== null) {
@@ -1062,6 +1111,26 @@
                 pushVisibilityObserver = null;
             }
             clearCardPushTransform();
+
+            // asegurar el ultimo cuadro exacto (63) en el canvas y liberar el decodificador
+            if (pushDecoder && pushCanvasCtx) {
+                const decoderRef = pushDecoder;
+                pushDecoder = null;
+                try {
+                    const { image } = await decoderRef.decode({ frameIndex: pushLastFrame });
+                    pushCanvasCtx.clearRect(0, 0, pushNativeW, pushNativeH);
+                    pushCanvasCtx.drawImage(image, 0, 0, pushNativeW, pushNativeH);
+                    image.close();
+                } catch {
+                    // conservar ultimo cuadro dibujado
+                }
+                try {
+                    decoderRef.close();
+                } catch {
+                    // ignorar cierre duplicado
+                }
+            }
+
             const finalMetrics = computePushMetrics();
             if (pushAvatarEl) {
                 pushAvatarEl.classList.add('is-settled');
@@ -1096,49 +1165,83 @@
             }
         };
 
-        // curva de pasos medida cuadro a cuadro desde el pie de apoyo real de push.webp (64 frames):
-        // f00-f14 (0.000-0.219): entrada de la tarjeta antes de que el avatar entre a cuadro
-        // f14-f20 (0.219-0.313): paso 1 (empuje inicial del pie trasero: 32.5% del tramo visible)
-        // f20-f28 (0.313-0.438): pausa 1 (pies plantados, 0 desplazamiento para evitar patinaje)
-        // f28-f40 (0.438-0.625): paso 2 (zancada principal continua con pico en f34: +52.1%)
-        // f40-f52 (0.625-0.813): pausa 2 (pies plantados en desplante, 0 desplazamiento)
-        // f52-f60 (0.813-0.938): paso 3 (cierre final al incorporarse: +15.4%)
-        // f60-f63 (0.938-1.000): reposo total en el ultimo cuadro
-        const pushVisibleKnots = [
-            [0.219, 0.0],
-            [0.313, 0.325],
-            [0.438, 0.325],
-            [0.625, 0.846],
-            [0.813, 0.846],
-            [0.938, 1.0],
-            [1.0, 1.0],
-        ];
-
-        const evaluateVisibleStepProgress = (t) => {
-            if (t <= pushVisibleKnots[0][0]) return 0;
-            if (t >= 1) return 1;
-            for (let i = 0; i < pushVisibleKnots.length - 1; i += 1) {
-                const [t0, y0] = pushVisibleKnots[i];
-                const [t1, y1] = pushVisibleKnots[i + 1];
-                if (t <= t1) {
-                    if (y0 === y1) return y0;
-                    const u = (t - t0) / (t1 - t0);
-                    const smooth = u * u * (3 - 2 * u);
-                    return y0 + (y1 - y0) * smooth;
-                }
-            }
-            return 1;
+        // curva de paso: inicia suave al despegar el pie, acelera al estar a punto de pisar y frena justo al apoyar
+        const evaluateStepDrive = (u) => {
+            if (u <= 0) return 0;
+            if (u >= 1) return 1;
+            const smooth = u * u * (3 - 2 * u);
+            return Math.pow(smooth, 1.35);
         };
 
-        const computePushOffsetX = (progress, metrics) => {
-            const entryEnd = pushVisibleKnots[0][0];
-            if (progress <= entryEnd) {
-                const u = entryEnd > 0 ? progress / entryEnd : 1;
-                const entryEase = 1 - Math.pow(1 - u, 3);
-                return metrics.startOffsetX - metrics.preEntryDist * entryEase;
+        // tambaleo amortiguado de la tarjeta al recibir cada empujon desde la derecha
+        const evaluatePushWobble = (u, amplitudeDeg, liftPx) => {
+            if (u <= 0 || u >= 1) return { rot: 0, liftY: 0 };
+            const fadeIn = Math.min(1, u / 0.12);
+            const fadeOut = Math.min(1, (1 - u) / 0.16);
+            const env = fadeIn * fadeOut * Math.exp(-2.1 * u);
+            const rot = -amplitudeDeg * env * Math.sin(Math.PI * 2.5 * u);
+            const liftPhase = Math.min(1, u / 0.5);
+            const liftY = -liftPx * Math.sin(Math.PI * liftPhase) * Math.exp(-2.4 * u);
+            return { rot, liftY };
+        };
+
+        // desplazamiento y tambaleo acoplados al cuadro exacto (0..63) de push.webp (628x706, 3008ms):
+        // regla fisica: si el avatar tiene los dos pies en el suelo, el desplazamiento es 0 px;
+        // cada empujon ocurre mientras da el paso y esta a punto de apoyar el pie en el piso
+        // f00-f08: entrada inicial de la tarjeta (avatar aun fuera de pantalla)
+        // f08-f10: ambos pies en el suelo (0 px)
+        // f10-f17.5: paso 1 a punto de apoyar -> empujon 1 (36%), frena al plantar en f17.5
+        // f17.5-f34: ambos pies en el suelo (0 px)
+        // f34-f42.5: paso 2 a punto de apoyar en desplante -> empujon 2 (49%), frena al plantar en f42.5
+        // f42.5-f54.5: ambos pies en el suelo (0 px)
+        // f54.5-f62: paso 3 cerrando pie trasero -> empujon 3 final (15%), llega a 0 px al plantar en f62
+        // f62-f63: ambos pies en el suelo en reposo definitivo (0 px)
+        const computePushPose = (frameFloat, metrics, includePreEntry) => {
+            const share1 = 0.36;
+            const share2 = 0.49;
+            const share3 = 0.15;
+
+            let baseX = 0;
+            if (includePreEntry && frameFloat <= 8) {
+                const u = frameFloat / 8;
+                const entryEase = 1 - Math.pow(1 - u, 2.5);
+                baseX = metrics.startOffsetX - metrics.preEntryDist * entryEase;
+            } else if (frameFloat < 10) {
+                baseX = metrics.onScreenRunway;
+            } else if (frameFloat <= 17.5) {
+                const u = (frameFloat - 10) / (17.5 - 10);
+                baseX = metrics.onScreenRunway * (1 - share1 * evaluateStepDrive(u));
+            } else if (frameFloat < 34) {
+                baseX = metrics.onScreenRunway * (1 - share1);
+            } else if (frameFloat <= 42.5) {
+                const u = (frameFloat - 34) / (42.5 - 34);
+                baseX = metrics.onScreenRunway * (1 - share1 - share2 * evaluateStepDrive(u));
+            } else if (frameFloat < 54.5) {
+                baseX = metrics.onScreenRunway * (1 - share1 - share2);
+            } else if (frameFloat <= 62) {
+                const u = (frameFloat - 54.5) / (62 - 54.5);
+                baseX = metrics.onScreenRunway * (1 - share1 - share2 - share3 * evaluateStepDrive(u));
+            } else {
+                baseX = 0;
             }
-            const stepFrac = evaluateVisibleStepProgress(progress);
-            return metrics.onScreenRunway * (1 - stepFrac);
+
+            // el tambaleo arranca al entrar el empujon y se amortigua unos cuadros mas al frenar la tarjeta
+            let wobble = { rot: 0, liftY: 0 };
+            if (includePreEntry && frameFloat > 0 && frameFloat < 8) {
+                wobble = evaluatePushWobble(frameFloat / 8, metrics.wobbleDeg * 0.4, metrics.wobbleLift * 0.35);
+            } else if (frameFloat >= 10.5 && frameFloat <= 22.5) {
+                wobble = evaluatePushWobble((frameFloat - 10.5) / 12, metrics.wobbleDeg * 0.85, metrics.wobbleLift * 0.85);
+            } else if (frameFloat >= 34.5 && frameFloat <= 48) {
+                wobble = evaluatePushWobble((frameFloat - 34.5) / 13.5, metrics.wobbleDeg, metrics.wobbleLift);
+            } else if (frameFloat >= 55 && frameFloat <= 62.9) {
+                wobble = evaluatePushWobble((frameFloat - 55) / 7.9, metrics.wobbleDeg * 0.6, metrics.wobbleLift * 0.55);
+            }
+
+            return {
+                baseX,
+                rot: wobble.rot,
+                liftY: wobble.liftY,
+            };
         };
 
         const stepPushAnimation = (now) => {
@@ -1150,19 +1253,27 @@
 
             const elapsed = now - pushStartTime;
             const progress = Math.min(1, Math.max(0, elapsed / pushActiveMetrics.durationMs));
-            const baseX = computePushOffsetX(progress, pushActiveMetrics);
+            const frameFloat = progress * pushLastFrame;
+            const frameIndex = Math.min(pushLastFrame, Math.floor(frameFloat));
+            const pose = computePushPose(frameFloat, pushActiveMetrics, pushUsingDecoder);
 
-            // pequeño rebote suave de la tarjeta justo al concluir el ultimo paso (f58-f62)
+            // pequeño asentamiento elastico de la tarjeta justo al culminar el paso 3 (f58.5-f61.8)
             let overshootX = 0;
-            if (progress > 0.9 && progress < 0.98) {
-                const s = (progress - 0.9) / 0.08;
+            if (frameFloat > 58.5 && frameFloat < 61.8) {
+                const s = (frameFloat - 58.5) / 3.3;
                 const sinVal = Math.sin(Math.PI * s);
                 overshootX = -pushActiveMetrics.overshoot * sinVal * sinVal;
             }
 
-            const cardX = baseX + overshootX;
+            if (pushUsingDecoder) {
+                renderDecoderFrame(frameIndex);
+            }
+
+            const cardX = pose.baseX + overshootX;
             aboutPushCard.style.setProperty('--push-card-x', `${cardX.toFixed(2)}px`);
-            setAvatarPosition(pushActiveMetrics.avatarFinalLeft + baseX, pushActiveMetrics.avatarTop);
+            aboutPushCard.style.setProperty('--push-card-y', `${pose.liftY.toFixed(2)}px`);
+            aboutPushCard.style.setProperty('--push-card-rot', `${pose.rot.toFixed(2)}deg`);
+            setAvatarPosition(pushActiveMetrics.avatarFinalLeft + pose.baseX, pushActiveMetrics.avatarTop);
 
             if (progress < 1) {
                 pushRafId = window.requestAnimationFrame(stepPushAnimation);
@@ -1187,53 +1298,103 @@
                 return;
             }
 
-            pushActiveMetrics = metrics;
-            aboutPushCard.classList.add('is-push-ready');
-            aboutPushCard.style.setProperty('--push-card-x', `${metrics.startOffsetX.toFixed(2)}px`);
-
             const wrapper = ensureAvatarWrapper();
             wrapper.classList.remove('is-hidden', 'is-settled');
-            setAvatarPosition(metrics.avatarFinalLeft + metrics.startOffsetX, metrics.avatarTop);
 
-            let resolvedUrl = `${pushAssetPath}?play=${Date.now()}`;
-            if (pushBlobPromise) {
-                const blob = await pushBlobPromise;
-                if (blob) {
-                    pushObjectUrl = URL.createObjectURL(blob);
-                    resolvedUrl = pushObjectUrl;
+            const bytes = await (prefetchPushBytes() || Promise.resolve(null));
+
+            // ruta principal: decodificar push.webp original cuadro a cuadro en calidad nativa 730x716
+            if (bytes && 'ImageDecoder' in window) {
+                try {
+                    const decoder = new window.ImageDecoder({ data: bytes.slice(0), type: 'image/webp' });
+                    await decoder.tracks.ready;
+                    const { image: firstFrame } = await decoder.decode({ frameIndex: 0 });
+
+                    const canvas = document.createElement('canvas');
+                    canvas.className = 'about-push__media';
+                    canvas.width = pushNativeW;
+                    canvas.height = pushNativeH;
+                    const ctx = canvas.getContext('2d');
+                    if (ctx) {
+                        ctx.drawImage(firstFrame, 0, 0, pushNativeW, pushNativeH);
+                        firstFrame.close();
+
+                        const liveMetrics = computePushMetrics();
+                        if (!liveMetrics.hasRoom) {
+                            decoder.close();
+                            clearCardPushTransform();
+                            wrapper.classList.add('is-hidden');
+                            pushFinished = true;
+                            return;
+                        }
+
+                        pushDecoder = decoder;
+                        pushCanvasCtx = ctx;
+                        pushUsingDecoder = true;
+                        pushRequestedFrame = 0;
+                        pushActiveMetrics = liveMetrics;
+
+                        aboutPushCard.classList.add('is-push-ready');
+                        aboutPushCard.style.setProperty('--push-card-x', `${liveMetrics.startOffsetX.toFixed(2)}px`);
+                        setAvatarPosition(liveMetrics.avatarFinalLeft + liveMetrics.startOffsetX, liveMetrics.avatarTop);
+
+                        wrapper.textContent = '';
+                        wrapper.appendChild(canvas);
+                        wrapper.classList.add('is-visible');
+
+                        pushAnimating = true;
+                        pushSectionVisible = true;
+                        pushPausedAt = 0;
+                        pushVisibilityObserver = new IntersectionObserver(
+                            (entries) => {
+                                entries.forEach((entry) => {
+                                    pushSectionVisible = entry.isIntersecting;
+                                    syncPushPlayback();
+                                });
+                            },
+                            { threshold: 0.05 }
+                        );
+                        pushVisibilityObserver.observe(aboutPushSection);
+                        pushRafId = window.requestAnimationFrame((firstFrameTime) => {
+                            pushStartTime = firstFrameTime;
+                            stepPushAnimation(firstFrameTime);
+                        });
+                        return;
+                    }
+                    firstFrame.close();
+                    decoder.close();
+                } catch {
+                    // continuar con respaldo de <img> si imagedecoder no puede decodificar webp
                 }
             }
 
-            const img = document.createElement('img');
-            img.className = 'about-push__img';
-            img.alt = '';
-            img.width = 730;
-            img.height = 716;
-            img.decoding = 'async';
-            img.src = resolvedUrl;
+            // respaldo para navegadores sin imagedecoder o apertura en file://:
+            // primero deslizar la tarjeta hasta que el avatar entre en pantalla y recien ahi montar push.webp
+            pushUsingDecoder = false;
+            aboutPushCard.classList.add('is-push-ready');
+            aboutPushCard.style.setProperty('--push-card-x', `${metrics.startOffsetX.toFixed(2)}px`);
+            setAvatarPosition(metrics.avatarFinalLeft + metrics.startOffsetX, metrics.avatarTop);
 
-            // esperar decodificacion con limite de tiempo para no bloquear la tarjeta
-            await new Promise((resolve) => {
-                let settled = false;
-                const done = () => {
-                    if (settled) return;
-                    settled = true;
-                    resolve();
-                };
-                const fallbackTimer = window.setTimeout(done, 1200);
-                const finishDecode = () => {
-                    window.clearTimeout(fallbackTimer);
-                    done();
-                };
-                if (typeof img.decode === 'function') {
-                    img.decode().then(finishDecode).catch(finishDecode);
-                } else {
-                    img.addEventListener('load', finishDecode, { once: true });
-                    img.addEventListener('error', finishDecode, { once: true });
-                }
-            });
+            if (metrics.preEntryDist > 1) {
+                await new Promise((resolve) => {
+                    const entryDurationMs = 700;
+                    const entryStart = performance.now();
+                    const tickEntry = (now) => {
+                        const u = Math.min(1, (now - entryStart) / entryDurationMs);
+                        const eased = 1 - Math.pow(1 - u, 3);
+                        const x = metrics.startOffsetX - metrics.preEntryDist * eased;
+                        aboutPushCard.style.setProperty('--push-card-x', `${x.toFixed(2)}px`);
+                        setAvatarPosition(metrics.avatarFinalLeft + x, metrics.avatarTop);
+                        if (u < 1) {
+                            window.requestAnimationFrame(tickEntry);
+                        } else {
+                            resolve();
+                        }
+                    };
+                    window.requestAnimationFrame(tickEntry);
+                });
+            }
 
-            // verificar que el espacio siga disponible tras esperar la imagen
             const liveMetrics = computePushMetrics();
             if (!liveMetrics.hasRoom) {
                 clearCardPushTransform();
@@ -1242,11 +1403,47 @@
                 return;
             }
 
+            let resolvedUrl = `${pushAssetPath}?play=${Date.now()}`;
+            if (bytes) {
+                pushObjectUrl = URL.createObjectURL(new Blob([bytes], { type: 'image/webp' }));
+                resolvedUrl = pushObjectUrl;
+            }
+
+            const img = document.createElement('img');
+            img.className = 'about-push__media';
+            img.alt = '';
+            img.width = pushNativeW;
+            img.height = pushNativeH;
+            img.decoding = 'async';
+
             pushActiveMetrics = liveMetrics;
+            aboutPushCard.style.setProperty('--push-card-x', `${liveMetrics.onScreenRunway.toFixed(2)}px`);
+            setAvatarPosition(liveMetrics.avatarFinalLeft + liveMetrics.onScreenRunway, liveMetrics.avatarTop);
             wrapper.textContent = '';
             wrapper.appendChild(img);
-            setAvatarPosition(liveMetrics.avatarFinalLeft + liveMetrics.startOffsetX, liveMetrics.avatarTop);
             wrapper.classList.add('is-visible');
+
+            // asignar src ya montado dentro del viewport para arrancar en el cuadro 0 sin adelanto ni pausa
+            img.src = resolvedUrl;
+            await new Promise((resolve) => {
+                let settled = false;
+                const done = () => {
+                    if (settled) return;
+                    settled = true;
+                    resolve();
+                };
+                const fallbackTimer = window.setTimeout(done, 1000);
+                const finish = () => {
+                    window.clearTimeout(fallbackTimer);
+                    done();
+                };
+                if (typeof img.decode === 'function') {
+                    img.decode().then(finish).catch(finish);
+                } else {
+                    img.addEventListener('load', finish, { once: true });
+                    img.addEventListener('error', finish, { once: true });
+                }
+            });
 
             pushAnimating = true;
             pushSectionVisible = true;
@@ -1261,7 +1458,6 @@
                 { threshold: 0.05 }
             );
             pushVisibilityObserver.observe(aboutPushSection);
-            // alinear el instante t=0 con el primer cuadro pintado del webp
             pushRafId = window.requestAnimationFrame((firstFrameTime) => {
                 pushStartTime = firstFrameTime;
                 stepPushAnimation(firstFrameTime);
@@ -1293,7 +1489,7 @@
 
             // antes del disparo: preparar fuera de pantalla solo si hay espacio suficiente
             if (metrics.hasRoom) {
-                prefetchPushAsset();
+                prefetchPushBytes();
                 aboutPushCard.classList.add('is-push-ready');
                 aboutPushCard.style.setProperty('--push-card-x', `${metrics.startOffsetX.toFixed(2)}px`);
                 setAvatarPosition(metrics.avatarFinalLeft + metrics.startOffsetX, metrics.avatarTop);
