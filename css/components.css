@@ -278,6 +278,54 @@
     padding-inline: var(--space-6);
 }
 
+.hero-stage {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: clip;
+    pointer-events: none;
+}
+
+.hero-astronaut {
+    position: absolute;
+    left: 50%;
+    bottom: calc(var(--lang-switch-offset-mobile) + 2.375rem + var(--space-4) + env(safe-area-inset-bottom, 0px));
+    height: var(--astronaut-height-mobile);
+    width: auto;
+    transform: translate3d(-50%, 0, 0);
+    will-change: transform;
+}
+
+.hero-astronaut.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.hero-astronaut__img {
+    display: block;
+    height: 100%;
+    width: auto;
+    max-width: none;
+    object-fit: contain;
+    transform-origin: center center;
+    animation: astronaut-bob var(--astronaut-bob-duration) ease-in-out infinite;
+    will-change: transform;
+}
+
+.hero-stage.is-paused .hero-astronaut__img {
+    animation-play-state: paused;
+}
+
+@keyframes astronaut-bob {
+    0%,
+    100% {
+        transform: translate3d(0, calc(var(--astronaut-bob-y) * -1), 0) rotate(calc(var(--astronaut-tilt) * -1));
+    }
+    50% {
+        transform: translate3d(0, var(--astronaut-bob-y), 0) rotate(var(--astronaut-tilt));
+    }
+}
+
 .hero__content {
     z-index: 1;
     max-width: var(--container-3xl);
@@ -315,12 +363,38 @@
 }
 
 @media (min-width: 768px) {
+    .hero-astronaut {
+        left: auto;
+        right: var(--space-8);
+        bottom: calc(var(--floating-nav-clearance) + var(--space-4));
+        height: var(--astronaut-height);
+        transform: none;
+    }
+
+    .hero-stage.has-js-astronaut .hero-astronaut {
+        top: 0;
+        left: 0;
+        right: auto;
+        bottom: auto;
+        transform: translate3d(var(--astronaut-x, 0px), var(--astronaut-y, 0px), 0);
+    }
+
+    .hero-astronaut--compact {
+        height: calc(var(--astronaut-height) * var(--astronaut-compact-scale));
+    }
+
     .hero__title {
         font-size: 5rem;
     }
 
     .hero__lead {
         font-size: 1.25rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-stage {
+        display: none;
     }
 }
 
@@ -439,6 +513,73 @@
         flex: 1 1 0;
         height: auto;
         min-height: 0;
+    }
+}
+
+/* capa decorativa del avatar que empuja la tarjeta en resumen */
+.about-push-stage {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    overflow: clip;
+    pointer-events: none;
+}
+
+.about-push__avatar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: var(--push-avatar-height);
+    width: auto;
+    opacity: 0;
+    transform: translate3d(var(--push-avatar-x, 0px), var(--push-avatar-y, 0px), 0);
+    will-change: transform, opacity;
+}
+
+.about-push__avatar.is-visible {
+    opacity: 1;
+}
+
+.about-push__avatar.is-settled {
+    will-change: auto;
+}
+
+.about-push__avatar.is-hidden {
+    display: none;
+}
+
+.about-push__img {
+    display: block;
+    height: 100%;
+    width: auto;
+    max-width: none;
+    object-fit: contain;
+}
+
+[data-about-push-card].is-push-ready {
+    transform: translate3d(var(--push-card-x, 0px), 0, 0);
+    will-change: transform;
+}
+
+@media (max-width: 767.98px) {
+    .about-push-stage {
+        display: none;
+    }
+
+    [data-about-push-card].is-push-ready {
+        transform: none;
+        will-change: auto;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .about-push-stage {
+        display: none;
+    }
+
+    [data-about-push-card].is-push-ready {
+        transform: none;
+        will-change: auto;
     }
 }
 
@@ -706,6 +847,20 @@
     color: var(--color-text-muted);
 }
 
+.contact-figure {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--contact-figure-gap);
+}
+
+.contact-figure__img {
+    display: block;
+    height: var(--contact-figure-height);
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+}
+
 /* ---------- selector de idioma ---------- */
 .lang-switch {
     position: fixed;
@@ -786,6 +941,13 @@
     .glass-card--lg {
         --bs-card-spacer-y: var(--space-6);
         --bs-card-spacer-x: var(--space-6);
+    }
+}
+
+/* espacio reservado en movil para el astronauta debajo del texto del hero */
+@media (max-width: 767.98px) and (prefers-reduced-motion: no-preference) {
+    .hero.page-section {
+        padding-bottom: calc(var(--lang-switch-offset-mobile) + 2.375rem + var(--astronaut-height-mobile) + var(--space-10) + env(safe-area-inset-bottom, 0px));
     }
 }
 
@@ -1107,9 +1269,17 @@
         filter: none !important;
     }
 
+    .hero-stage,
+    .about-push-stage,
+    .contact-figure,
     .lang-switch,
     .floating-nav {
         display: none !important;
+    }
+
+    [data-about-push-card] {
+        transform: none !important;
+        will-change: auto !important;
     }
 
     .reveal {

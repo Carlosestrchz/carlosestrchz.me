@@ -41,6 +41,7 @@
             'infra.seafileLabel': 'Abrir Seafile en drive.carlosestrchz.me',
             'contact.title': 'Hablemos',
             'contact.text': '¿Tienes una vacante o un proyecto en mente? Escríbeme.',
+            'contact.avatarAlt': 'Avatar 3D de Carlos Estrada en traje formal con portafolio',
             'lang.ariaLabel': 'Selector de idioma',
             'nav.ariaLabel': 'Navegación principal',
             'nav.home': 'Inicio',
@@ -83,6 +84,7 @@
             'infra.seafileLabel': 'Open Seafile at drive.carlosestrchz.me',
             'contact.title': "Let's talk",
             'contact.text': 'Have a job opening or a project in mind? Write to me.',
+            'contact.avatarAlt': '3D avatar of Carlos Estrada wearing a formal suit and holding a briefcase',
             'lang.ariaLabel': 'Language selector',
             'nav.ariaLabel': 'Main navigation',
             'nav.home': 'Home',
@@ -137,6 +139,13 @@
             const key = el.getAttribute('data-i18n-aria');
             if (key && dict[key]) {
                 el.setAttribute('aria-label', dict[key]);
+            }
+        });
+
+        document.querySelectorAll('[data-i18n-alt]').forEach((el) => {
+            const key = el.getAttribute('data-i18n-alt');
+            if (key && dict[key]) {
+                el.setAttribute('alt', dict[key]);
             }
         });
 
@@ -506,6 +515,827 @@
 
             window.requestAnimationFrame(tickCarousel);
         }
+    }
+
+    /* ---------- utilidades compartidas para tokens y medidas ---------- */
+    const readNumericToken = (el, tokenName, fallback) => {
+        const raw = window.getComputedStyle(el).getPropertyValue(tokenName).trim();
+        if (!raw) return fallback;
+        const parsed = parseFloat(raw);
+        if (!Number.isFinite(parsed)) return fallback;
+        if (raw.endsWith('rem')) {
+            const rootSize = parseFloat(window.getComputedStyle(document.documentElement).fontSize) || 16;
+            return parsed * rootSize;
+        }
+        return parsed;
+    };
+
+    const readDurationMsToken = (el, tokenName, fallbackMs) => {
+        const raw = window.getComputedStyle(el).getPropertyValue(tokenName).trim();
+        if (!raw) return fallbackMs;
+        const parsed = parseFloat(raw);
+        if (!Number.isFinite(parsed) || parsed <= 0) return fallbackMs;
+        return raw.endsWith('ms') ? parsed : parsed * 1000;
+    };
+
+    const getOffsetRelativeTo = (el, ancestor) => {
+        let left = 0;
+        let top = 0;
+        let current = el;
+        while (current && current !== ancestor) {
+            left += current.offsetLeft;
+            top += current.offsetTop;
+            current = current.offsetParent;
+        }
+        return {
+            left,
+            top,
+            width: el.offsetWidth,
+            height: el.offsetHeight,
+        };
+    };
+
+    /* ---------- astronauta flotante en el hero ([data-astronaut-stage]) ---------- */
+    const astronautStage = document.querySelector('[data-astronaut-stage]');
+    const astronautEl = astronautStage ? astronautStage.querySelector('[data-astronaut]') : null;
+    const heroSection = astronautStage ? astronautStage.closest('.page-section') : null;
+
+    if (astronautStage && astronautEl && heroSection && !reducedMotionQuery.matches) {
+        const desktopAstronautQuery = window.matchMedia('(min-width: 768px)');
+        const obstacleNodes = Array.from(heroSection.querySelectorAll('[data-astronaut-obstacle]'));
+        const floatingNavRef = document.querySelector('[data-floating-nav]');
+        const langSwitchRef = document.querySelector('[data-lang-switch]');
+
+        let isHeroVisible = true;
+        let astroRafId = null;
+        let astroLastTime = 0;
+        let astroMode = 'mobile';
+        let astroBounds = { minX: 0, maxX: 0, minY: 0, maxY: 0 };
+        let astroSize = { width: 0, height: 0 };
+        let astroObstacles = [];
+        let astroX = 0;
+        let astroY = 0;
+        let astroVx = 0;
+        let astroVy = 0;
+        let hasPlacedAstronaut = false;
+
+        const rectOverlapsAny = (x, y, w, h, rects) => {
+            for (let i = 0; i < rects.length; i += 1) {
+                const r = rects[i];
+                if (x < r.right && x + w > r.left && y < r.bottom && y + h > r.top) {
+                    return r;
+                }
+            }
+            return null;
+        };
+
+        const computeBottomUiClearance = () => {
+            let clearance = readNumericToken(document.documentElement, '--floating-nav-clearance', 88);
+            const vh = window.innerHeight;
+            [floatingNavRef, langSwitchRef].forEach((node) => {
+                if (!node) return;
+                const rect = node.getBoundingClientRect();
+                if (rect.height > 0 && rect.top < vh) {
+                    clearance = Math.max(clearance, vh - rect.top + 12);
+                }
+            });
+            return clearance;
+        };
+
+        const measureObstaclesAndBounds = () => {
+            const stageW = astronautStage.clientWidth;
+            const stageH = astronautStage.clientHeight;
+            const stageRect = astronautStage.getBoundingClientRect();
+            const scaleX = stageW > 0 && stageRect.width > 0 ? stageRect.width / stageW : 1;
+            const scaleY = stageH > 0 && stageRect.height > 0 ? stageRect.height / stageH : 1;
+
+            const exclusionMargin = readNumericToken(astronautStage, '--astronaut-exclusion-margin', 24);
+            const edgePadding = readNumericToken(astronautStage, '--astronaut-edge-padding', 16);
+            const bobPadY = readNumericToken(astronautStage, '--astronaut-bob-y', 10);
+
+            const astroRect = astronautEl.getBoundingClientRect();
+            const w = astroRect.width > 0 ? astroRect.width / scaleX : astronautEl.offsetWidth;
+            const h = astroRect.height > 0 ? astroRect.height / scaleY : astronautEl.offsetHeight;
+            const tiltPadX = Math.ceil(h * 0.04);
+
+            const padX = exclusionMargin + tiltPadX;
+            const padY = exclusionMargin + bobPadY;
+
+            const obstacles = [];
+            obstacleNodes.forEach((node) => {
+                const r = node.getBoundingClientRect();
+                if (r.width <= 0 || r.height <= 0) return;
+                obstacles.push({
+                    left: (r.left - stageRect.left) / scaleX - padX,
+                    top: (r.top - stageRect.top) / scaleY - padY,
+                    right: (r.right - stageRect.left) / scaleX + padX,
+                    bottom: (r.bottom - stageRect.top) / scaleY + padY,
+                });
+            });
+
+            const bottomClearance = computeBottomUiClearance();
+            const minX = edgePadding + tiltPadX;
+            const maxX = stageW - edgePadding - tiltPadX - w;
+            const minY = edgePadding + bobPadY;
+            const maxY = stageH - bottomClearance - bobPadY - h;
+
+            return {
+                w,
+                h,
+                obstacles,
+                bounds: { minX, maxX, minY, maxY },
+            };
+        };
+
+        const evaluateFreeSpace = (metrics) => {
+            const { w, h, obstacles, bounds } = metrics;
+            if (w <= 0 || h <= 0 || bounds.maxX < bounds.minX || bounds.maxY < bounds.minY) {
+                return { canDrift: false, hasStaticSpot: false, bestSpot: null };
+            }
+
+            const cols = 24;
+            const rows = 16;
+            const spanX = bounds.maxX - bounds.minX;
+            const spanY = bounds.maxY - bounds.minY;
+            const validPoints = [];
+
+            for (let iy = 0; iy <= rows; iy += 1) {
+                const py = bounds.minY + (spanY * iy) / rows;
+                for (let ix = 0; ix <= cols; ix += 1) {
+                    const px = bounds.minX + (spanX * ix) / cols;
+                    if (!rectOverlapsAny(px, py, w, h, obstacles)) {
+                        validPoints.push({ x: px, y: py });
+                    }
+                }
+            }
+
+            if (!validPoints.length) {
+                return { canDrift: false, hasStaticSpot: false, bestSpot: null };
+            }
+
+            // calcular holgura respecto a los obstaculos para elegir el mejor punto inicial
+            const scorePoint = (pt) => {
+                let minDist = Infinity;
+                obstacles.forEach((r) => {
+                    const dx = Math.max(r.left - (pt.x + w), pt.x - r.right, 0);
+                    const dy = Math.max(r.top - (pt.y + h), pt.y - r.bottom, 0);
+                    const dist = Math.hypot(dx, dy);
+                    if (dist < minDist) minDist = dist;
+                });
+                const edgeDist = Math.min(
+                    pt.x - bounds.minX,
+                    bounds.maxX - pt.x,
+                    pt.y - bounds.minY,
+                    bounds.maxY - pt.y
+                );
+                return minDist + Math.min(edgeDist, 40) * 0.4;
+            };
+
+            let bestSpot = validPoints[0];
+            let bestScore = -Infinity;
+            validPoints.forEach((pt) => {
+                const score = scorePoint(pt);
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestSpot = pt;
+                }
+            });
+
+            // medir cuanto recorrido libre existe desde el mejor punto en ejes x e y
+            const step = 8;
+            let freeLeft = 0;
+            while (
+                bestSpot.x - freeLeft - step >= bounds.minX &&
+                !rectOverlapsAny(bestSpot.x - freeLeft - step, bestSpot.y, w, h, obstacles)
+            ) {
+                freeLeft += step;
+            }
+            let freeRight = 0;
+            while (
+                bestSpot.x + freeRight + step <= bounds.maxX &&
+                !rectOverlapsAny(bestSpot.x + freeRight + step, bestSpot.y, w, h, obstacles)
+            ) {
+                freeRight += step;
+            }
+            let freeUp = 0;
+            while (
+                bestSpot.y - freeUp - step >= bounds.minY &&
+                !rectOverlapsAny(bestSpot.x, bestSpot.y - freeUp - step, w, h, obstacles)
+            ) {
+                freeUp += step;
+            }
+            let freeDown = 0;
+            while (
+                bestSpot.y + freeDown + step <= bounds.maxY &&
+                !rectOverlapsAny(bestSpot.x, bestSpot.y + freeDown + step, w, h, obstacles)
+            ) {
+                freeDown += step;
+            }
+
+            const driftSpan = Math.max(freeLeft + freeRight, freeUp + freeDown);
+            return {
+                canDrift: driftSpan >= 32,
+                hasStaticSpot: true,
+                bestSpot,
+            };
+        };
+
+        const renderAstronautPos = () => {
+            astronautEl.style.setProperty('--astronaut-x', `${astroX.toFixed(2)}px`);
+            astronautEl.style.setProperty('--astronaut-y', `${astroY.toFixed(2)}px`);
+        };
+
+        const stopAstronautLoop = () => {
+            if (astroRafId !== null) {
+                window.cancelAnimationFrame(astroRafId);
+                astroRafId = null;
+            }
+        };
+
+        const tickAstronaut = (now) => {
+            if (!isHeroVisible || document.hidden || astroMode !== 'drift') {
+                astroRafId = null;
+                return;
+            }
+
+            const dt = astroLastTime > 0 ? Math.min(0.05, (now - astroLastTime) / 1000) : 0;
+            astroLastTime = now;
+
+            if (dt > 0) {
+                // avanzar eje x y rebotar contra limites y zonas de exclusion
+                const nextX = astroX + astroVx * dt;
+                if (nextX <= astroBounds.minX) {
+                    astroX = astroBounds.minX;
+                    astroVx = Math.abs(astroVx);
+                } else if (nextX >= astroBounds.maxX) {
+                    astroX = astroBounds.maxX;
+                    astroVx = -Math.abs(astroVx);
+                } else {
+                    const hitX = rectOverlapsAny(nextX, astroY, astroSize.width, astroSize.height, astroObstacles);
+                    if (hitX) {
+                        if (astroVx > 0) {
+                            astroX = Math.max(astroBounds.minX, hitX.left - astroSize.width);
+                            astroVx = -Math.abs(astroVx);
+                        } else {
+                            astroX = Math.min(astroBounds.maxX, hitX.right);
+                            astroVx = Math.abs(astroVx);
+                        }
+                    } else {
+                        astroX = nextX;
+                    }
+                }
+
+                // avanzar eje y y rebotar contra limites y zonas de exclusion
+                const nextY = astroY + astroVy * dt;
+                if (nextY <= astroBounds.minY) {
+                    astroY = astroBounds.minY;
+                    astroVy = Math.abs(astroVy);
+                } else if (nextY >= astroBounds.maxY) {
+                    astroY = astroBounds.maxY;
+                    astroVy = -Math.abs(astroVy);
+                } else {
+                    const hitY = rectOverlapsAny(astroX, nextY, astroSize.width, astroSize.height, astroObstacles);
+                    if (hitY) {
+                        if (astroVy > 0) {
+                            astroY = Math.max(astroBounds.minY, hitY.top - astroSize.height);
+                            astroVy = -Math.abs(astroVy);
+                        } else {
+                            astroY = Math.min(astroBounds.maxY, hitY.bottom);
+                            astroVy = Math.abs(astroVy);
+                        }
+                    } else {
+                        astroY = nextY;
+                    }
+                }
+
+                renderAstronautPos();
+            }
+
+            astroRafId = window.requestAnimationFrame(tickAstronaut);
+        };
+
+        const syncAstronautPlayback = () => {
+            const shouldPause = !isHeroVisible || document.hidden;
+            astronautStage.classList.toggle('is-paused', shouldPause);
+
+            if (shouldPause || astroMode !== 'drift') {
+                stopAstronautLoop();
+                return;
+            }
+
+            if (astroRafId === null) {
+                astroLastTime = performance.now();
+                astroRafId = window.requestAnimationFrame(tickAstronaut);
+            }
+        };
+
+        const layoutAstronaut = () => {
+            if (!desktopAstronautQuery.matches) {
+                astroMode = 'mobile';
+                hasPlacedAstronaut = false;
+                stopAstronautLoop();
+                astronautStage.classList.remove('has-js-astronaut');
+                astronautEl.classList.remove('hero-astronaut--compact', 'is-hidden');
+                astronautEl.style.removeProperty('--astronaut-x');
+                astronautEl.style.removeProperty('--astronaut-y');
+                syncAstronautPlayback();
+                return;
+            }
+
+            astronautStage.classList.add('has-js-astronaut');
+            astronautEl.classList.remove('hero-astronaut--compact', 'is-hidden');
+
+            let metrics = measureObstaclesAndBounds();
+            let evaluation = evaluateFreeSpace(metrics);
+
+            // si a tamaño normal no cabe para flotar, intentar en tamaño compacto
+            if (!evaluation.canDrift) {
+                astronautEl.classList.add('hero-astronaut--compact');
+                metrics = measureObstaclesAndBounds();
+                evaluation = evaluateFreeSpace(metrics);
+            }
+
+            astroSize = { width: metrics.w, height: metrics.h };
+            astroBounds = metrics.bounds;
+            astroObstacles = metrics.obstacles;
+
+            if (!evaluation.hasStaticSpot) {
+                astroMode = 'hidden';
+                astronautEl.classList.add('is-hidden');
+                stopAstronautLoop();
+                return;
+            }
+
+            astroMode = evaluation.canDrift ? 'drift' : 'static';
+
+            const currentValid =
+                hasPlacedAstronaut &&
+                astroX >= astroBounds.minX &&
+                astroX <= astroBounds.maxX &&
+                astroY >= astroBounds.minY &&
+                astroY <= astroBounds.maxY &&
+                !rectOverlapsAny(astroX, astroY, astroSize.width, astroSize.height, astroObstacles);
+
+            if (!currentValid) {
+                astroX = evaluation.bestSpot.x;
+                astroY = evaluation.bestSpot.y;
+                hasPlacedAstronaut = true;
+            }
+
+            const speed = readNumericToken(astronautStage, '--astronaut-speed', 24);
+            if (astroVx === 0 && astroVy === 0) {
+                const angle = 0.62;
+                astroVx = Math.cos(angle) * speed;
+                astroVy = Math.sin(angle) * speed;
+            } else {
+                const mag = Math.hypot(astroVx, astroVy) || 1;
+                astroVx = (astroVx / mag) * speed;
+                astroVy = (astroVy / mag) * speed;
+            }
+
+            renderAstronautPos();
+            syncAstronautPlayback();
+        };
+
+        if (supportsObserver) {
+            const heroObserver = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        isHeroVisible = entry.isIntersecting;
+                        syncAstronautPlayback();
+                    });
+                },
+                { threshold: 0.05 }
+            );
+            heroObserver.observe(heroSection);
+        }
+
+        document.addEventListener('visibilitychange', syncAstronautPlayback);
+
+        let astroResizeFrame = null;
+        const scheduleAstronautLayout = () => {
+            if (astroResizeFrame !== null) return;
+            astroResizeFrame = window.requestAnimationFrame(() => {
+                astroResizeFrame = null;
+                layoutAstronaut();
+            });
+        };
+
+        window.addEventListener('resize', scheduleAstronautLayout, { passive: true });
+        onLanguageChangedCallbacks.push(scheduleAstronautLayout);
+
+        if ('ResizeObserver' in window) {
+            const astroResizeObserver = new ResizeObserver(scheduleAstronautLayout);
+            astroResizeObserver.observe(heroSection);
+            const heroContent = heroSection.querySelector('.hero__content');
+            if (heroContent) {
+                astroResizeObserver.observe(heroContent);
+            }
+        }
+
+        const astroImg = astronautEl.querySelector('.hero-astronaut__img');
+        if (astroImg && !astroImg.complete) {
+            astroImg.addEventListener('load', scheduleAstronautLayout, { once: true });
+        }
+
+        window.requestAnimationFrame(layoutAstronaut);
+    }
+
+    /* ---------- avatar que empuja la tarjeta en resumen ([data-about-push-section]) ---------- */
+    const aboutPushSection = document.querySelector('[data-about-push-section]');
+    const aboutPushCard = aboutPushSection ? aboutPushSection.querySelector('[data-about-push-card]') : null;
+    const aboutPushStage = aboutPushSection ? aboutPushSection.querySelector('[data-about-push-stage]') : null;
+
+    if (aboutPushSection && aboutPushCard && aboutPushStage && !reducedMotionQuery.matches && supportsObserver) {
+        const pushAssetPath = 'img/webp/push.webp';
+        const pushAspectRatio = 730 / 716;
+
+        let pushAvatarEl = null;
+        let pushBlobPromise = null;
+        let pushObjectUrl = null;
+        let pushTriggered = false;
+        let pushFinished = false;
+        let pushAnimating = false;
+        let pushSectionVisible = true;
+        let pushRafId = null;
+        let pushStartTime = 0;
+        let pushPausedAt = 0;
+        let pushActiveMetrics = null;
+        let pushObserver = null;
+        let pushVisibilityObserver = null;
+
+        const ensureAvatarWrapper = () => {
+            if (pushAvatarEl) return pushAvatarEl;
+            pushAvatarEl = document.createElement('div');
+            pushAvatarEl.className = 'about-push__avatar';
+            aboutPushStage.appendChild(pushAvatarEl);
+            return pushAvatarEl;
+        };
+
+        const prefetchPushAsset = () => {
+            if (pushBlobPromise || typeof window.fetch !== 'function') return;
+            pushBlobPromise = window
+                .fetch(pushAssetPath)
+                .then((res) => (res.ok ? res.blob() : null))
+                .catch(() => null);
+        };
+
+        const computePushMetrics = () => {
+            const minBreakpoint = readNumericToken(aboutPushSection, '--push-min-breakpoint', 768);
+            const sectionWidth = aboutPushSection.clientWidth;
+            const sectionHeight = aboutPushSection.clientHeight;
+
+            if (window.innerWidth < minBreakpoint || sectionWidth <= 0) {
+                return { hasRoom: false };
+            }
+
+            const wrapper = ensureAvatarWrapper();
+            const wasHidden = wrapper.classList.contains('is-hidden');
+            if (wasHidden) wrapper.classList.remove('is-hidden');
+            const avatarHeight = wrapper.offsetHeight;
+            if (wasHidden) wrapper.classList.add('is-hidden');
+
+            if (avatarHeight <= 0) {
+                return { hasRoom: false };
+            }
+
+            const avatarWidth = avatarHeight * pushAspectRatio;
+            const cardBox = getOffsetRelativeTo(aboutPushCard, aboutPushSection);
+            const cardRight = cardBox.left + cardBox.width;
+            const freeRightSpace = sectionWidth - cardRight;
+
+            const contactOverlap = readNumericToken(aboutPushSection, '--push-contact-overlap', 12);
+            const handInsetRatio = readNumericToken(aboutPushSection, '--push-hand-inset-ratio', 0.137);
+            const bodyVisibleRatio = readNumericToken(aboutPushSection, '--push-body-visible-ratio', 0.716);
+            const verticalAlign = readNumericToken(aboutPushSection, '--push-vertical-align', 0.96);
+            const verticalOffset = readNumericToken(aboutPushSection, '--push-vertical-offset', 0);
+            const overshoot = readNumericToken(aboutPushSection, '--push-overshoot', 8);
+            const edgeClearance = readNumericToken(aboutPushSection, '--push-edge-clearance', 10);
+            const durationMs = readDurationMsToken(aboutPushSection, '--push-duration', 5330);
+
+            const requiredVisibleWidth = avatarWidth * bodyVisibleRatio - contactOverlap;
+            const hasRoom = freeRightSpace >= requiredVisibleWidth + edgeClearance;
+
+            const avatarFinalLeft = cardRight - avatarWidth * handInsetRatio - contactOverlap;
+            const rawTop = cardBox.top + (cardBox.height - avatarHeight) * verticalAlign + verticalOffset;
+            const avatarTop = Math.max(8, Math.min(sectionHeight - avatarHeight - 8, rawTop));
+            const startOffsetX = Math.max(sectionWidth - cardBox.left + 32, avatarWidth + 48);
+
+            // distancia visible en pantalla desde que las manos del avatar entran por el borde derecho
+            const avatarVisibleFinalLeft = avatarFinalLeft + avatarWidth * handInsetRatio;
+            const rawOnScreenRunway = Math.max(0, sectionWidth - avatarVisibleFinalLeft + 18);
+            const onScreenRunway = Math.min(startOffsetX, rawOnScreenRunway, avatarWidth * 1.7);
+            const preEntryDist = Math.max(0, startOffsetX - onScreenRunway);
+
+            return {
+                hasRoom,
+                avatarFinalLeft,
+                avatarTop,
+                startOffsetX,
+                preEntryDist,
+                onScreenRunway,
+                overshoot,
+                durationMs,
+            };
+        };
+
+        const setAvatarPosition = (x, y) => {
+            if (!pushAvatarEl) return;
+            pushAvatarEl.style.setProperty('--push-avatar-x', `${x.toFixed(2)}px`);
+            pushAvatarEl.style.setProperty('--push-avatar-y', `${y.toFixed(2)}px`);
+        };
+
+        const clearCardPushTransform = () => {
+            aboutPushCard.classList.remove('is-push-ready');
+            aboutPushCard.style.removeProperty('--push-card-x');
+        };
+
+        const finishPushAnimation = () => {
+            pushAnimating = false;
+            pushFinished = true;
+            if (pushRafId !== null) {
+                window.cancelAnimationFrame(pushRafId);
+                pushRafId = null;
+            }
+            if (pushVisibilityObserver) {
+                pushVisibilityObserver.disconnect();
+                pushVisibilityObserver = null;
+            }
+            clearCardPushTransform();
+            const finalMetrics = computePushMetrics();
+            if (pushAvatarEl) {
+                pushAvatarEl.classList.add('is-settled');
+                if (finalMetrics.hasRoom) {
+                    pushAvatarEl.classList.remove('is-hidden');
+                    setAvatarPosition(finalMetrics.avatarFinalLeft, finalMetrics.avatarTop);
+                } else {
+                    pushAvatarEl.classList.add('is-hidden');
+                }
+            }
+        };
+
+        const syncPushPlayback = () => {
+            if (!pushAnimating) return;
+            const shouldPause = document.hidden || !pushSectionVisible;
+            if (shouldPause) {
+                if (pushPausedAt === 0) {
+                    pushPausedAt = performance.now();
+                }
+                if (pushRafId !== null) {
+                    window.cancelAnimationFrame(pushRafId);
+                    pushRafId = null;
+                }
+            } else {
+                if (pushPausedAt > 0) {
+                    pushStartTime += performance.now() - pushPausedAt;
+                    pushPausedAt = 0;
+                }
+                if (pushRafId === null) {
+                    pushRafId = window.requestAnimationFrame(stepPushAnimation);
+                }
+            }
+        };
+
+        // curva de pasos medida cuadro a cuadro desde el pie de apoyo real de push.webp (64 frames):
+        // f00-f14 (0.000-0.219): entrada de la tarjeta antes de que el avatar entre a cuadro
+        // f14-f20 (0.219-0.313): paso 1 (empuje inicial del pie trasero: 32.5% del tramo visible)
+        // f20-f28 (0.313-0.438): pausa 1 (pies plantados, 0 desplazamiento para evitar patinaje)
+        // f28-f40 (0.438-0.625): paso 2 (zancada principal continua con pico en f34: +52.1%)
+        // f40-f52 (0.625-0.813): pausa 2 (pies plantados en desplante, 0 desplazamiento)
+        // f52-f60 (0.813-0.938): paso 3 (cierre final al incorporarse: +15.4%)
+        // f60-f63 (0.938-1.000): reposo total en el ultimo cuadro
+        const pushVisibleKnots = [
+            [0.219, 0.0],
+            [0.313, 0.325],
+            [0.438, 0.325],
+            [0.625, 0.846],
+            [0.813, 0.846],
+            [0.938, 1.0],
+            [1.0, 1.0],
+        ];
+
+        const evaluateVisibleStepProgress = (t) => {
+            if (t <= pushVisibleKnots[0][0]) return 0;
+            if (t >= 1) return 1;
+            for (let i = 0; i < pushVisibleKnots.length - 1; i += 1) {
+                const [t0, y0] = pushVisibleKnots[i];
+                const [t1, y1] = pushVisibleKnots[i + 1];
+                if (t <= t1) {
+                    if (y0 === y1) return y0;
+                    const u = (t - t0) / (t1 - t0);
+                    const smooth = u * u * (3 - 2 * u);
+                    return y0 + (y1 - y0) * smooth;
+                }
+            }
+            return 1;
+        };
+
+        const computePushOffsetX = (progress, metrics) => {
+            const entryEnd = pushVisibleKnots[0][0];
+            if (progress <= entryEnd) {
+                const u = entryEnd > 0 ? progress / entryEnd : 1;
+                const entryEase = 1 - Math.pow(1 - u, 3);
+                return metrics.startOffsetX - metrics.preEntryDist * entryEase;
+            }
+            const stepFrac = evaluateVisibleStepProgress(progress);
+            return metrics.onScreenRunway * (1 - stepFrac);
+        };
+
+        const stepPushAnimation = (now) => {
+            if (!pushAnimating || !pushActiveMetrics) return;
+            if (document.hidden || !pushSectionVisible) {
+                pushRafId = null;
+                return;
+            }
+
+            const elapsed = now - pushStartTime;
+            const progress = Math.min(1, Math.max(0, elapsed / pushActiveMetrics.durationMs));
+            const baseX = computePushOffsetX(progress, pushActiveMetrics);
+
+            // pequeño rebote suave de la tarjeta justo al concluir el ultimo paso (f58-f62)
+            let overshootX = 0;
+            if (progress > 0.9 && progress < 0.98) {
+                const s = (progress - 0.9) / 0.08;
+                const sinVal = Math.sin(Math.PI * s);
+                overshootX = -pushActiveMetrics.overshoot * sinVal * sinVal;
+            }
+
+            const cardX = baseX + overshootX;
+            aboutPushCard.style.setProperty('--push-card-x', `${cardX.toFixed(2)}px`);
+            setAvatarPosition(pushActiveMetrics.avatarFinalLeft + baseX, pushActiveMetrics.avatarTop);
+
+            if (progress < 1) {
+                pushRafId = window.requestAnimationFrame(stepPushAnimation);
+            } else {
+                finishPushAnimation();
+            }
+        };
+
+        const startPushSequence = async () => {
+            if (pushTriggered) return;
+            pushTriggered = true;
+            if (pushObserver) {
+                pushObserver.disconnect();
+                pushObserver = null;
+            }
+
+            const metrics = computePushMetrics();
+            if (!metrics.hasRoom) {
+                clearCardPushTransform();
+                if (pushAvatarEl) pushAvatarEl.classList.add('is-hidden');
+                pushFinished = true;
+                return;
+            }
+
+            pushActiveMetrics = metrics;
+            aboutPushCard.classList.add('is-push-ready');
+            aboutPushCard.style.setProperty('--push-card-x', `${metrics.startOffsetX.toFixed(2)}px`);
+
+            const wrapper = ensureAvatarWrapper();
+            wrapper.classList.remove('is-hidden', 'is-settled');
+            setAvatarPosition(metrics.avatarFinalLeft + metrics.startOffsetX, metrics.avatarTop);
+
+            let resolvedUrl = `${pushAssetPath}?play=${Date.now()}`;
+            if (pushBlobPromise) {
+                const blob = await pushBlobPromise;
+                if (blob) {
+                    pushObjectUrl = URL.createObjectURL(blob);
+                    resolvedUrl = pushObjectUrl;
+                }
+            }
+
+            const img = document.createElement('img');
+            img.className = 'about-push__img';
+            img.alt = '';
+            img.width = 730;
+            img.height = 716;
+            img.decoding = 'async';
+            img.src = resolvedUrl;
+
+            // esperar decodificacion con limite de tiempo para no bloquear la tarjeta
+            await new Promise((resolve) => {
+                let settled = false;
+                const done = () => {
+                    if (settled) return;
+                    settled = true;
+                    resolve();
+                };
+                const fallbackTimer = window.setTimeout(done, 1200);
+                const finishDecode = () => {
+                    window.clearTimeout(fallbackTimer);
+                    done();
+                };
+                if (typeof img.decode === 'function') {
+                    img.decode().then(finishDecode).catch(finishDecode);
+                } else {
+                    img.addEventListener('load', finishDecode, { once: true });
+                    img.addEventListener('error', finishDecode, { once: true });
+                }
+            });
+
+            // verificar que el espacio siga disponible tras esperar la imagen
+            const liveMetrics = computePushMetrics();
+            if (!liveMetrics.hasRoom) {
+                clearCardPushTransform();
+                wrapper.classList.add('is-hidden');
+                pushFinished = true;
+                return;
+            }
+
+            pushActiveMetrics = liveMetrics;
+            wrapper.textContent = '';
+            wrapper.appendChild(img);
+            setAvatarPosition(liveMetrics.avatarFinalLeft + liveMetrics.startOffsetX, liveMetrics.avatarTop);
+            wrapper.classList.add('is-visible');
+
+            pushAnimating = true;
+            pushSectionVisible = true;
+            pushPausedAt = 0;
+            pushVisibilityObserver = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        pushSectionVisible = entry.isIntersecting;
+                        syncPushPlayback();
+                    });
+                },
+                { threshold: 0.05 }
+            );
+            pushVisibilityObserver.observe(aboutPushSection);
+            // alinear el instante t=0 con el primer cuadro pintado del webp
+            pushRafId = window.requestAnimationFrame((firstFrameTime) => {
+                pushStartTime = firstFrameTime;
+                stepPushAnimation(firstFrameTime);
+            });
+        };
+
+        const syncPushLayout = () => {
+            const metrics = computePushMetrics();
+
+            if (pushFinished) {
+                if (!pushAvatarEl) return;
+                if (metrics.hasRoom) {
+                    pushAvatarEl.classList.remove('is-hidden');
+                    setAvatarPosition(metrics.avatarFinalLeft, metrics.avatarTop);
+                } else {
+                    pushAvatarEl.classList.add('is-hidden');
+                }
+                return;
+            }
+
+            if (pushAnimating) {
+                if (!metrics.hasRoom) {
+                    finishPushAnimation();
+                } else {
+                    pushActiveMetrics = metrics;
+                }
+                return;
+            }
+
+            // antes del disparo: preparar fuera de pantalla solo si hay espacio suficiente
+            if (metrics.hasRoom) {
+                prefetchPushAsset();
+                aboutPushCard.classList.add('is-push-ready');
+                aboutPushCard.style.setProperty('--push-card-x', `${metrics.startOffsetX.toFixed(2)}px`);
+                setAvatarPosition(metrics.avatarFinalLeft + metrics.startOffsetX, metrics.avatarTop);
+                if (!pushObserver) {
+                    pushObserver = new IntersectionObserver(
+                        (entries) => {
+                            entries.forEach((entry) => {
+                                if (entry.isIntersecting && !pushTriggered) {
+                                    startPushSequence();
+                                }
+                            });
+                        },
+                        { threshold: 0.5 }
+                    );
+                    pushObserver.observe(aboutPushSection);
+                }
+            } else {
+                clearCardPushTransform();
+                if (pushAvatarEl) {
+                    pushAvatarEl.classList.add('is-hidden');
+                }
+                if (pushObserver) {
+                    pushObserver.disconnect();
+                    pushObserver = null;
+                }
+            }
+        };
+
+        document.addEventListener('visibilitychange', syncPushPlayback);
+
+        let pushResizeFrame = null;
+        const schedulePushLayout = () => {
+            if (pushResizeFrame !== null) return;
+            pushResizeFrame = window.requestAnimationFrame(() => {
+                pushResizeFrame = null;
+                syncPushLayout();
+            });
+        };
+
+        window.addEventListener('resize', schedulePushLayout, { passive: true });
+        onLanguageChangedCallbacks.push(schedulePushLayout);
+        window.requestAnimationFrame(syncPushLayout);
     }
 
     /* ---------- barra de navegacion flotante ([data-floating-nav]) ---------- */

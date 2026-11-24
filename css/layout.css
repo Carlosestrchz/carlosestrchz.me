@@ -13,6 +13,7 @@
 
 /* secciones a pantalla completa centradas vertical y horizontalmente */
 .page-section {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -21,9 +22,13 @@
     min-height: var(--section-min-height);
     padding-top: var(--section-padding-top);
     padding-bottom: var(--section-padding-bottom);
+    overflow: clip;
+    isolation: isolate;
 }
 
 .page-section__inner {
+    position: relative;
+    z-index: 1;
     width: 100%;
 }
 

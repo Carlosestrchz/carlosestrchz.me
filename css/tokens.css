@@ -90,6 +90,33 @@
     --shadow-infra-active: 0 18px 40px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.35);
     --transition-infra: 260ms var(--ease-nav);
 
+    /* animacion decorativa del astronauta en el hero */
+    --astronaut-height: clamp(6.5rem, 15svh, 9.5rem);
+    --astronaut-height-mobile: clamp(5.75rem, 17svh, 7.75rem);
+    --astronaut-compact-scale: 0.78;
+    --astronaut-speed: 24;
+    --astronaut-bob-y: 0.625rem;
+    --astronaut-bob-duration: 5.6s;
+    --astronaut-tilt: 4deg;
+    --astronaut-exclusion-margin: 1.5rem;
+    --astronaut-edge-padding: 1rem;
+
+    /* animacion decorativa del avatar que empuja la tarjeta en resumen */
+    --push-avatar-height: clamp(8.5rem, calc(19vw - 7.3rem), 16rem);
+    --push-duration: 5.33s;
+    --push-contact-overlap: 12px;
+    --push-hand-inset-ratio: 0.137;
+    --push-body-visible-ratio: 0.716;
+    --push-vertical-align: 0.96;
+    --push-vertical-offset: 0px;
+    --push-overshoot: 6px;
+    --push-edge-clearance: 10px;
+    --push-min-breakpoint: 768;
+
+    /* imagen decorativa en la seccion de contacto */
+    --contact-figure-height: clamp(18rem, 48svh, 31.5rem);
+    --contact-figure-gap: var(--space-6);
+
     /* acentos con transparencia */
     --color-accent-glow: rgba(99, 102, 241, 0.2);
     --color-accent-tint: rgba(99, 102, 241, 0.1);

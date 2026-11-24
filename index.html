@@ -31,15 +31,21 @@
     </div>
 
     <!-- hero -->
-    <header id="inicio" class="hero page-section position-relative overflow-hidden">
+    <header id="inicio" class="hero page-section">
+        <!-- capa decorativa del astronauta flotando -->
+        <div class="hero-stage" aria-hidden="true" data-astronaut-stage>
+            <div class="hero-astronaut" data-astronaut>
+                <img src="img/webp/astronaut.webp" alt="" width="618" height="1079" class="hero-astronaut__img" decoding="async" loading="lazy">
+            </div>
+        </div>
         <div class="hero__content position-relative text-center">
-            <p class="hero__eyebrow mb-0" data-i18n="hero.eyebrow">Hola, ¡Has llegado a mi página personal!</p>
-            <h1 class="hero__title">Carlos <span class="gradient-text">Estrada</span></h1>
-            <p class="hero__role" data-i18n="hero.role">Desarrollador Java Jr | Apps multiplataforma.</p>
-            <p class="hero__lead mx-auto" data-i18n="hero.lead">
+            <p class="hero__eyebrow mb-0" data-i18n="hero.eyebrow" data-astronaut-obstacle>Hola, ¡Has llegado a mi página personal!</p>
+            <h1 class="hero__title" data-astronaut-obstacle>Carlos <span class="gradient-text">Estrada</span></h1>
+            <p class="hero__role" data-i18n="hero.role" data-astronaut-obstacle>Desarrollador Java Jr | Apps multiplataforma.</p>
+            <p class="hero__lead mx-auto" data-i18n="hero.lead" data-astronaut-obstacle>
                 Experiencia en soluciones IoT y desarrollo web, con experiencia práctica en backend e infraestructura en la nube. Aquí encontrarás mi formación, proyectos y habilidades.
             </p>
-            <div class="d-flex flex-wrap justify-content-center gap-3">
+            <div class="d-flex flex-wrap justify-content-center gap-3" data-astronaut-obstacle>
                 <a href="#proyectos" class="btn rounded-pill btn-cta btn-cta--primary" data-i18n="hero.ctaProjects">Ver proyectos</a>
                 <a href="#contacto" class="btn rounded-pill btn-cta btn-cta--outline" data-i18n="hero.ctaContact">Contactar</a>
             </div>
@@ -49,7 +55,7 @@
     <main class="page-main">
 
         <!-- sobre mi -->
-        <section id="sobre-mi" class="page-section" aria-labelledby="sobre-mi-titulo">
+        <section id="sobre-mi" class="page-section" aria-labelledby="sobre-mi-titulo" data-about-push-section>
             <div class="container page-container page-section__inner" data-reveal>
                 <div class="row g-4 g-md-5 align-items-stretch">
                     <div class="col-12 col-md-6">
@@ -66,7 +72,7 @@
                         </div>
                     </div>
                     <div class="col-12 col-md-6">
-                        <div class="card glass-card glass-card--md h-100">
+                        <div class="card glass-card glass-card--md h-100" data-about-push-card>
                             <div class="card-body d-flex flex-column">
                                 <h3 class="card-title glass-card__title" data-i18n="about.summaryTitle">En resumen:</h3>
                                 <div class="summary-photo">
@@ -92,6 +98,8 @@
                     </div>
                 </div>
             </div>
+            <!-- capa decorativa del avatar que empuja la tarjeta -->
+            <div class="about-push-stage" aria-hidden="true" data-about-push-stage></div>
         </section>
 
         <!-- proyectos -->
@@ -313,7 +321,7 @@
 
     <!-- contacto -->
     <footer id="contacto" class="site-footer page-section">
-        <div class="container page-container page-section__inner">
+        <div class="container page-container page-section__inner" data-reveal>
             <div class="card glass-card glass-card--lg">
                 <div class="card-body d-flex flex-column flex-md-row justify-content-md-between align-items-center gap-4 text-center text-md-start">
                     <div>
@@ -324,6 +332,10 @@
                         <a href="mailto:carlosestrchz@gmail.com" target="_blank" rel="noopener noreferrer" class="btn rounded-pill btn-cta btn-cta--outline btn-cta--invert-hover btn-cta--sm">carlosestrchz@gmail.com</a>
                     </div>
                 </div>
+            </div>
+            <!-- imagen del avatar en la seccion de contacto -->
+            <div class="contact-figure">
+                <img src="img/business%20man.png" alt="Avatar 3D de Carlos Estrada en traje formal con portafolio" width="2048" height="2048" class="contact-figure__img" decoding="async" loading="lazy" data-i18n-alt="contact.avatarAlt">
             </div>
         </div>
     </footer>
