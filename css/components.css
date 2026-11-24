@@ -523,7 +523,7 @@
     top: 0;
     left: 0;
     height: var(--push-avatar-height);
-    aspect-ratio: 628 / 706;
+    aspect-ratio: 400 / 450;
     opacity: 0;
     transform: translate3d(var(--push-avatar-x, 0px), var(--push-avatar-y, 0px), 0);
     will-change: transform, opacity;

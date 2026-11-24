@@ -948,8 +948,8 @@
 
     if (aboutPushSection && aboutPushCard && aboutPushStage && !reducedMotionQuery.matches && supportsObserver) {
         const pushAssetPath = 'img/webp/push.webp';
-        const pushNativeW = 628;
-        const pushNativeH = 706;
+        const pushNativeW = 400;
+        const pushNativeH = 450;
         const pushTotalFrames = 64;
         const pushLastFrame = pushTotalFrames - 1;
         const pushAspectRatio = pushNativeW / pushNativeH;
@@ -991,7 +991,7 @@
             return pushBytesPromise;
         };
 
-        // renderiza un cuadro exacto (0..63) del webp original en el canvas nativo 730x716
+        // renderiza un cuadro exacto (0..63) del webp en el canvas nativo 400x450
         const renderDecoderFrame = (targetIndex) => {
             if (!pushDecoder || !pushCanvasCtx) return;
             const clamped = Math.max(0, Math.min(pushLastFrame, targetIndex));
@@ -1185,7 +1185,7 @@
             return { rot, liftY };
         };
 
-        // desplazamiento y tambaleo acoplados al cuadro exacto (0..63) de push.webp (628x706, 3008ms):
+        // desplazamiento y tambaleo acoplados al cuadro exacto (0..63) de push.webp (400x450, 3008ms):
         // regla fisica: si el avatar tiene los dos pies en el suelo, el desplazamiento es 0 px;
         // cada empujon ocurre mientras da el paso y esta a punto de apoyar el pie en el piso
         // f00-f08: entrada inicial de la tarjeta (avatar aun fuera de pantalla)
@@ -1303,7 +1303,7 @@
 
             const bytes = await (prefetchPushBytes() || Promise.resolve(null));
 
-            // ruta principal: decodificar push.webp original cuadro a cuadro en calidad nativa 730x716
+            // ruta principal: decodificar push.webp cuadro a cuadro en calidad nativa 400x450
             if (bytes && 'ImageDecoder' in window) {
                 try {
                     const decoder = new window.ImageDecoder({ data: bytes.slice(0), type: 'image/webp' });
